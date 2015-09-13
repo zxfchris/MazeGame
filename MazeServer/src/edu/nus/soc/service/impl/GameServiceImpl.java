@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 
 import edu.nus.soc.model.Maze;
@@ -18,6 +19,7 @@ public class GameServiceImpl extends UnicastRemoteObject implements GameService{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private Scanner scanner;
 
 	public GameServiceImpl() throws RemoteException {
 		super();
@@ -27,7 +29,7 @@ public class GameServiceImpl extends UnicastRemoteObject implements GameService{
 	@Override
 	public Maze initGame() throws RemoteException{
 		System.out.println("Please input your maze size N:");
-		Scanner scanner = new Scanner(System.in);
+		scanner = new Scanner(System.in);
 		int size = scanner.nextInt();
 		System.out.println("Please input your original treasure num M:");
 		int originalTNum = scanner.nextInt();
@@ -51,6 +53,7 @@ public class GameServiceImpl extends UnicastRemoteObject implements GameService{
 		Map<Position, Integer> treasureMap = new HashMap<Position, Integer>();
 		for (int i=0; i<originalTNum; i++) {
 			Position pos = getRandomPos(size);
+			
 			if(treasureMap.containsKey(pos)) {
 				int cellTreasure = treasureMap.get(pos);
 				treasureMap.put(pos, cellTreasure+1);
@@ -62,8 +65,9 @@ public class GameServiceImpl extends UnicastRemoteObject implements GameService{
 	}
 	
 	private static Position getRandomPos(int size) {
-		int x = (int) Math.round(Math.random()* size + 1);
-		int y = (int) Math.round(Math.random()* size + 1);
+		Random	rand = new Random();
+		int x = rand.nextInt(size);
+		int y = rand.nextInt(size);
 		Position pos = new Position(x, y);
 		return pos;
 	}
@@ -77,11 +81,21 @@ public class GameServiceImpl extends UnicastRemoteObject implements GameService{
 	@Override
 	public Player joinGame() throws RemoteException{
 		int currentId = Maze.get().getCurrentId();
+		
 		Player player = new Player(currentId);
 		Map<Integer, Player> players = Maze.get().getPlayers();
+		
+		Position playerPos = getRandomPos(Maze.get().getSize());
+		player.setPos(playerPos);
+		
 		players.put(currentId, player);
-		Maze.get().setCurrentId(currentId);
+		Maze.get().setCurrentId(currentId + 1);
+		
+		currentId = Maze.get().getCurrentId();
+		//for debug
+		System.out.println("currentId:"+currentId);
 		System.out.println("Recieved client's request to join into a game.");
+		
 		return player;
 	}
 

@@ -3,8 +3,8 @@ package edu.nus.soc.model;
 import java.io.Serializable;
 
 public class Position implements Serializable{
-	private static int x;
-	private static int y;
+	private  int x;
+	private  int y;
 	
 	public Position(int x, int y) {
 		this.x = x;
@@ -27,17 +27,29 @@ public class Position implements Serializable{
 		this.y = y;
 	}
 
+
 	@Override
-	public boolean equals(Object pos2) {
-		if (pos2 == null) {
-			return false;
-		}
-		if (pos2.getClass() != Position.class) {
-			return false;
-		}
-		if (((Position) pos2).getX()==this.x && ((Position) pos2).getY()==this.y) {
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + x;
+		result = prime * result + y;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		}
-		return false;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Position other = (Position) obj;
+		if (x != other.x)
+			return false;
+		if (y != other.y)
+			return false;
+		return true;
 	}
 }

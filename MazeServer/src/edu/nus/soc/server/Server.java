@@ -1,36 +1,21 @@
 package edu.nus.soc.server;
 
-import java.util.List;
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
 
-import edu.nus.soc.logic.CallBack;
-import edu.nus.soc.obj.Player;
+import edu.nus.soc.service.GameService;
+import edu.nus.soc.service.impl.GameServiceImpl;
 
-public class Server implements CallBack{
-	private List<Player> players;
-	public Server(List<Player> players) {
-		this.players = players;
-	}
-	/**
-	 * The server indicates all players game start.
-	 */
-	public void callPlayer() {
-        new Thread(new Runnable() {  
-            @Override  
-            public void run() {  
-                for (Player p : players) {
-                	p.notifiedGameStart(Server.this);
-                }
-            }  
-        }).start();  
-	}
-
-	@Override
-	public void startGame(Player player) {
-		// TODO Auto-generated method stub
-		System.out.println("Notify player +"+ player.getId()+" the game starts.");
-	}
+public class Server {
 	
 	public static void main(String[] args){
-		System.out.println("Server running...");
+		try {
+			GameService gameService = new GameServiceImpl();
+			LocateRegistry.createRegistry(8888);
+			Naming.rebind("rmi://127.0.0.1:8888/GameService", gameService);
+			System.out.println("Server starts!");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

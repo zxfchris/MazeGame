@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.nus.soc.model.Maze;
+import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
-import edu.nus.soc.model.Movement;
-import edu.nus.soc.service.GameService;
+import edu.nus.soc.service.PlayerService;
 
 public class Client {
 	private static Player player 	= null;
@@ -16,11 +16,11 @@ public class Client {
 	public static void main(String[] args) {
 		
 		try {
-			GameService gameService = 
-					(GameService) Naming.lookup("rmi://127.0.0.1:8888/GameService");
-			player	= gameService.joinGame();
+			PlayerService playerService = 
+					(PlayerService) Naming.lookup("rmi://127.0.0.1:8888/playerService");
+			player	= playerService.joinGame();
 			System.out.println(player.getId());
-			maze	= gameService.move(player, Movement.N);
+			maze	= playerService.move(player, Movement.N);
 			printMaze(maze);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -47,7 +47,7 @@ public class Client {
 			for (int i=0; i<maze.getSize(); i++) {
 				Position pos = new Position(i, j);
 				if (mazeMap.containsKey(pos)) {
-					System.out.print("M"+mazeMap.get(pos)+"\t");
+					System.out.print("T"+mazeMap.get(pos)+"\t");
 				} else if(playerMap.containsKey(pos)) {
 					System.out.print("P"+playerMap.get(pos)+"\t");
 				} else {

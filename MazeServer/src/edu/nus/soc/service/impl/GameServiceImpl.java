@@ -1,19 +1,16 @@
 package edu.nus.soc.service.impl;
 
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
 import edu.nus.soc.model.Maze;
-import edu.nus.soc.model.Movement;
-import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
 import edu.nus.soc.service.GameService;
 
-public class GameServiceImpl extends UnicastRemoteObject implements GameService{
+public class GameServiceImpl implements GameService{
 
 	/**
 	 * 
@@ -27,7 +24,7 @@ public class GameServiceImpl extends UnicastRemoteObject implements GameService{
 	}
 
 	@Override
-	public Maze initGame() throws RemoteException{
+	public Maze initGame(){
 		System.out.println("Please input your maze size N:");
 		scanner = new Scanner(System.in);
 		int size = scanner.nextInt();
@@ -52,7 +49,7 @@ public class GameServiceImpl extends UnicastRemoteObject implements GameService{
 	private static Map<Position, Integer> randomTreasures(int originalTNum, int size) {
 		Map<Position, Integer> treasureMap = new HashMap<Position, Integer>();
 		for (int i=0; i<originalTNum; i++) {
-			Position pos = getRandomPos(size);
+			Position pos = Util.getRandomPos(size);
 			
 			if(treasureMap.containsKey(pos)) {
 				int cellTreasure = treasureMap.get(pos);
@@ -64,93 +61,10 @@ public class GameServiceImpl extends UnicastRemoteObject implements GameService{
 		return treasureMap;
 	}
 	
-	private static Position getRandomPos(int size) {
-		Random	rand = new Random();
-		int x = rand.nextInt(size);
-		int y = rand.nextInt(size);
-		Position pos = new Position(x, y);
-		return pos;
-	}
-
 	@Override
-	public void startGame() throws RemoteException{
+	public void startGame(){
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public Player joinGame() throws RemoteException{
-		int currentId = Maze.get().getCurrentId();
-		
-		Player player = new Player(currentId);
-		Map<Integer, Player> players = Maze.get().getPlayers();
-		
-		Position playerPos = getRandomPos(Maze.get().getSize());
-		player.setPos(playerPos);
-		
-		players.put(currentId, player);
-		Maze.get().setCurrentId(currentId + 1);
-		
-		currentId = Maze.get().getCurrentId();
-		//for debug
-		System.out.println("currentId:"+currentId);
-		System.out.println("Recieved client's request to join into a game.");
-		
-		return player;
-	}
-
-	@Override
-	public boolean quitGame(int playerId) throws RemoteException{
-		Map<Integer, Player> players = Maze.get().getPlayers();
-		players.remove(playerId);
-		Maze.get().setPlayers(players);
-		System.out.println("Player "+ playerId +" quited the game");
-		return true;
-	}
-
-	@Override
-	public Maze move(Player player, Movement m) throws RemoteException{
-		Position currentPos = player.getPos();
-		int x = currentPos.getX();
-		int y = currentPos.getY();
-		switch (m) {
-		case N:
-			currentPos.setY(y-1);
-			break;
-		case S:
-			currentPos.setY(y+1);
-			break;
-		case E:
-			currentPos.setX(x+1);
-			break;
-		case W:
-			currentPos.setX(x-1);
-			break;
-		case NOMOVE:
-			break;
-		}
-		player.setPos(currentPos);
-		collectTreasures(player);
-		System.out.println("Player moved!");
-		return Maze.get();
-	}
-	
-	public static void collectTreasures(Player player) {
-		Position currentPos = player.getPos();
-		Maze maze = Maze.get();
-		Map<Position, Integer> treasureMap = maze.getTreasureMap();
-		if (treasureMap.containsKey(currentPos)) {
-			int cellTreasure = treasureMap.get(currentPos);
-			int treasureNum = cellTreasure + player.getTreasureNum();
-			player.setTreasureNum(treasureNum);
-			System.out.println("Player "+ player.getId() +"collected "+
-					cellTreasure +" treasures");
-			treasureMap.put(currentPos, 0);
-			maze.setTreasureMap(treasureMap);
-		}
-		Map<Integer, Player> players = maze.getPlayers();
-		players.put(player.getId(), player);
-		maze.setPlayers(players);
-	}
-	
 }

@@ -23,12 +23,16 @@ public class Client {
 			PlayerService playerService = 
 					(PlayerService) Naming.lookup("rmi://127.0.0.1:8888/playerService");
 			player	= playerService.joinGame(service);
-			System.out.println("join game successfully, player id:" + player.getId() + 
-					"is allocated by system.");
-			//maze	= playerService.move(player, Movement.N);
-			//printMaze(maze);
-			while (true) {
-				Thread.sleep(1000);
+			if (player == null) {
+				System.out.println("Sorry the game has started, please wait for next round.");
+			} else {
+				System.out.println("join game successfully, player id:" + player.getId() + 
+						"is allocated by system.");
+				//maze	= playerService.move(player, Movement.N);
+				//printMaze(maze);
+				while (true) {
+					Thread.sleep(1000);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

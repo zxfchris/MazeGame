@@ -13,12 +13,14 @@ import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
 import edu.nus.soc.service.CallBackService;
+import edu.nus.soc.service.GameService;
 import edu.nus.soc.service.PlayerService;
 
 public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerService{
 	
 	private static boolean gameStarted = false;
 	private static Timer timer = new Timer(true);
+	private final GameService gameService = new GameServiceImpl();
 	private static Map<Integer,CallBackService> callbackMap = new HashMap<Integer, CallBackService>();
 	private static TimerTask startGame = new TimerTask() {
 
@@ -55,15 +57,18 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		int currentId = Maze.get().getCurrentId();
 		
 		Player player = new Player(currentId);
-		Map<Integer, Player> players = Maze.get().getPlayers();
 		
 		/**
 		 * first player join, start timer
+		 * initiate game
 		 */
-		if (0 == players.size()) {
+		if (Maze.get().getPlayers() == null ||
+				0 == Maze.get().getPlayers().size()) {
 			//execute callback functions to notify clients the start of Game.
 			timer.schedule(startGame, 1000 * 20);
+			gameService.initGame();
 		}
+		Map<Integer, Player> players = Maze.get().getPlayers();
 
 		Position playerPos = Util.getRandomPos(Maze.get().getSize());
 		player.setPos(playerPos);

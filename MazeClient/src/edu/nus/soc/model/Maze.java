@@ -1,7 +1,6 @@
 package edu.nus.soc.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Maze implements Serializable{
@@ -30,13 +29,6 @@ public class Maze implements Serializable{
 		return _instance;
 	}
 	
-	public void init(int size, int originalTNum) {
-		this.size = size;
-		this.originalTNum = originalTNum;
-		treasureMap = new HashMap<Position, Integer>();
-		players = new HashMap<Integer, Player>();
-	}
-
 	public int getSize() {
 		return size;
 	}

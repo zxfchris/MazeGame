@@ -8,7 +8,7 @@ import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Player;
 
 public interface PlayerService extends Remote{
-	Player joinGame() throws RemoteException;  //client requests to join the game
+	Player joinGame(CallBackService client) throws RemoteException;  //client requests to join the game
 	
 	boolean quitGame(int playerId) throws RemoteException;  //client quit game
 	

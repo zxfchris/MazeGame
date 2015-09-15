@@ -17,9 +17,9 @@ public class Server {
 	public static void main(String[] args){
 		try {
 			PlayerService playerService = new PlayerServiceImpl();
-			GameService gameService = new GameServiceImpl();
+			final GameService gameService = new GameServiceImpl();
 			LocateRegistry.createRegistry(8888);
-			Naming.rebind("rmi://127.0.0.1:8888/GameService", playerService);
+			Naming.rebind("rmi://127.0.0.1:8888/playerService", playerService);
 			System.out.println("Server starts!");
 			Maze maze = gameService.initGame();
 			printMaze(maze);

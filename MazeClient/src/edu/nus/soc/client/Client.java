@@ -1,72 +1,82 @@
 package edu.nus.soc.client;
 
-import java.rmi.Naming;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.Scanner;
 
 import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Player;
-import edu.nus.soc.model.Position;
-import edu.nus.soc.service.CallBackService;
-import edu.nus.soc.service.PlayerService;
-import edu.nus.soc.service.impl.CallBackServiceImpl;
+import edu.nus.soc.service.impl.Util;
 
 public class Client {
 	private static Player player 	= null;
 	private static Maze	  maze		= null;
+	private static Scanner scanner  = new Scanner(System.in);
+	private static Controller controller = null;
 	
 	public static void main(String[] args) {
+		try {
+			controller = new Controller();
+		} catch (RemoteException | MalformedURLException | NotBoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		try {
-			CallBackService service = new CallBackServiceImpl();
-			PlayerService playerService = 
-					(PlayerService) Naming.lookup("rmi://127.0.0.1:8888/playerService");
-			player	= playerService.joinGame(service);
-			if (player == null) {
-				System.out.println("Sorry the game has started, please wait for next round.");
-			} else {
-				System.out.println("join game successfully, player id:" + player.getId() + 
-						"is allocated by system.");
-				//maze	= playerService.move(player, Movement.N);
-				//printMaze(maze);
-				while (true) {
-					Thread.sleep(1000);
-				}
-			}
-		} catch (Exception e) {
+			player = controller.joinGame();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-	}
-	
-	private static void printMaze(Maze maze) {
-		Map<Position, Integer> 	mazeMap = maze.getTreasureMap();
-		Map<Integer, Player> 	players = maze.getPlayers();
-		Map<Position, Integer> 	playerMap = new HashMap<Position, Integer>();
-		
-		for (int playerId : players.keySet()) {
-			Player player = players.get(playerId);
-			Position playerPos = player.getPos();
-			if (playerMap.containsKey(playerPos)) {
-				int cellPlayerNum = playerMap.get(playerPos);
-				playerMap.put(playerPos, cellPlayerNum++);
-			} else {
-				playerMap.put(playerPos, 1);
-			}
 		}
-
-		for (int j=0; j<maze.getSize(); j++) {
-			for (int i=0; i<maze.getSize(); i++) {
-				Position pos = new Position(i, j);
-				if (mazeMap.containsKey(pos)) {
-					System.out.print("T"+mazeMap.get(pos)+"\t");
-				} else if(playerMap.containsKey(pos)) {
-					System.out.print("P"+playerMap.get(pos)+"\t");
+		
+		if (null == player) {
+			System.out.println("Sorry the game has started, please wait for next round.");
+		}
+		else {
+			System.out.println("You have join game successfully, player id:" + player.getId()
+					+ " is allocated by system\n Please wait other players to join in...");
+			//set player to controller
+			controller.setPlayer(player);
+		}
+		
+		while (true) {
+			if (true == Controller.isGameStarted()) {
+				System.out.println("Please input your choice (S, E, N, W, NOMOVE) "
+						+ "or type 'Q' to quit the game:");
+				String str = scanner.nextLine();
+				if (str.equals("Q")) {
+					System.out.println("Player would like to quit game.");
+					try {
+						controller.quitGame();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					System.exit(0);
+				}
+				Movement move = Movement.getMovementByString(str);
+				if (null == move)
+				{
+					System.out.println("Sorry, your input is invalid, please try again.");
 				} else {
-					System.out.print("X\t");
+					try {
+						maze = controller.move(move);
+						Util.printMaze(maze);
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			} else {
+				try {
+					Thread.sleep(10);	//wait for 10 milliseconds and try again
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-			System.out.println();
 		}
 	}
 }

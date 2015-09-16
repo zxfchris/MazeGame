@@ -66,7 +66,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 				0 == Maze.get().getPlayers().size()) {
 			//execute callback functions to notify clients the start of Game.
 			timer.schedule(startGame, 1000 * 20);
-			gameService.initGame();
+			//gameService.initGame();
 		}
 		Map<Integer, Player> players = Maze.get().getPlayers();
 

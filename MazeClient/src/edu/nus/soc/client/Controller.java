@@ -1,14 +1,35 @@
 package edu.nus.soc.client;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+
+import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
+import edu.nus.soc.service.CallBackService;
+import edu.nus.soc.service.PlayerService;
+import edu.nus.soc.service.impl.CallBackServiceImpl;
 
 public class Controller {
-	private Player player;
+	private static Player			player;
+	private static PlayerService	service;			//services provided by game server
+	private static CallBackService	callbackService;	//callback service to be called by game server
+	private static boolean			gameStarted = false;
 	
-	public Controller() {
-		
+	public static boolean isGameStarted() {
+		return gameStarted;
+	}
+
+	public static void setGameStarted(boolean gameStarted) {
+		Controller.gameStarted = gameStarted;
+	}
+
+	public Controller() throws RemoteException, MalformedURLException, NotBoundException {
+		callbackService = new CallBackServiceImpl();
+		service			= (PlayerService) Naming.lookup("rmi://127.0.0.1:8888/playerService");
 	}
 	
 	private static boolean isMovable(Position pos, Movement m, int size) {
@@ -39,16 +60,31 @@ public class Controller {
 			break;
 		case NOMOVE:
 			break;
+		default:
+			flag = false;
+			break;
 		}
 		return flag;
 	}
 	
-	public void move(Movement m) {
+	public Maze move(Movement m) throws RemoteException {
 		if (this.player == null) {
 			System.out.println("The game hasn't started, please wait...");
-			return;
+			return null;
 		}
-		
+		return service.move(player, m);
+	}
+	
+	public Player joinGame() throws RemoteException {
+		return service.joinGame(callbackService);
+	}
+	
+	public boolean quitGame() throws RemoteException {
+		if (null == this.player) {
+			System.out.println("The game hasn't started, you cannot quit at this time...");
+			return false;
+		}
+		return service.quitGame(player.getId());
 	}
 
 	public Player getPlayer() {
@@ -58,4 +94,5 @@ public class Controller {
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
+
 }

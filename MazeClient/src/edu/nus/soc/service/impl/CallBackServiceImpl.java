@@ -3,6 +3,7 @@ package edu.nus.soc.service.impl;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import edu.nus.soc.client.Controller;
 import edu.nus.soc.service.CallBackService;
 
 public class CallBackServiceImpl extends UnicastRemoteObject implements CallBackService{
@@ -20,7 +21,8 @@ public class CallBackServiceImpl extends UnicastRemoteObject implements CallBack
 	@Override
 	public void startGame() throws RemoteException {
 		// TODO Auto-generated method stub
-		System.out.println("Client callback method startGame executed..");
+		System.out.println("Game started, now you can move!");
+		Controller.setGameStarted(true);
 	}
 
 }

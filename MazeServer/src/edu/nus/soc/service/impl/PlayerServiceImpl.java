@@ -12,7 +12,9 @@ import edu.nus.soc.service.CallBackService;
 import edu.nus.soc.service.PlayerService;
 
 public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerService{
+
 	private final GameController gameController = GameController.getController();
+	
 	private static Maze maze = Maze.get();
 	
 	public PlayerServiceImpl() throws RemoteException {
@@ -46,10 +48,11 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 	}
 
 	@Override
-	public Maze move(Player player, Movement m) throws RemoteException{
+	public Maze move(Integer playerId, Movement m) throws RemoteException{
 		if (false == gameController.isGameStarted()) {
 			return null;
 		}
+		Player player = Maze.get().getPlayers().get(playerId);
 		Position currentPos = player.getPos();
 		int x = currentPos.getX();
 		int y = currentPos.getY();
@@ -71,19 +74,21 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		}
 		player.setPos(currentPos);
 		collectTreasures(player);
-		System.out.println("Player moved!");
+		
+		System.out.println("Player " + player.getId() + " moved!");
 		return maze;
 	}
 	
 	private static void collectTreasures(Player player) {
 		Position currentPos = player.getPos();
 		Map<Position, Integer> treasureMap = maze.getTreasureMap();
-		if (treasureMap.containsKey(currentPos)) {
+		if (treasureMap.containsKey(currentPos)) {			//collect treasure
 			int cellTreasure = treasureMap.get(currentPos);
 			int treasureNum = cellTreasure + player.getTreasureNum();
 			player.setTreasureNum(treasureNum);
 			System.out.println("Player "+ player.getId() +"collected "+
 					cellTreasure +" treasures");
+			Maze.get().setTreasureNum(Maze.get().getTreasureNum() - cellTreasure);
 			treasureMap.put(currentPos, 0);
 			maze.setTreasureMap(treasureMap);
 		}

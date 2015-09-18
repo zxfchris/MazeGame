@@ -13,15 +13,15 @@ import edu.nus.soc.model.Position;
 import edu.nus.soc.service.CallBackService;
 
 public class GameController {
-
+	private static GameController controller = null;
+	private static Object lock = new Object();
+	
 	private Scanner scanner;
+	
 	private static boolean gameStarted = false;
 	private static Timer timer = new Timer(true);
 	private static Maze maze = Maze.get();
 	private static Map<Integer,CallBackService> callbackMap = new HashMap<Integer, CallBackService>();
-	
-	private static GameController controller = null;
-	private static Object lock = new Object();
 	
 	private GameController() {
 		
@@ -88,7 +88,7 @@ public class GameController {
 		if (maze.getPlayers() == null ||
 				0 == maze.getPlayers().size()) {
 			//execute callback functions to notify clients the start of Game.
-			timer.schedule(startGame, 1000 * 20);
+			timer.schedule(startGame, 1000 * 5);
 			//gameService.initGame();
 		}
 		Map<Integer, Player> players = maze.getPlayers();
@@ -113,39 +113,19 @@ public class GameController {
 		return player;
 	}
 	
-	public void fireGameEnd() { //TODO
-		if (maze.getTreasureMap() == null) {
-			return;
-		}
-		if(gameStarted && maze.getTreasureMap().size() == 0) {
-			notifyClients();
-			setGameStarted(false);
-		}
-	}
-	
 	private static void notifyClients() {
 		
 		if(!gameStarted ) {
 			for (Integer key : callbackMap.keySet()) {
 				System.out.println("callback key: " + key);
 				try {
-					callbackMap.get(key).notifyGameStart();
+					callbackMap.get(key).notifyGameStart(key, maze);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			}
 		}
 		
-		if(gameStarted && maze.getTreasureMap().size() == 0) {
-			for (Integer key : callbackMap.keySet()) {
-				System.out.println("callback key: " + key);
-				try {
-					callbackMap.get(key).notifyGameEnd();
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 
 	public void removeCallbackService(int playerId) {

@@ -12,6 +12,7 @@ public class Maze implements Serializable{
 	private Map<Integer, Player> players;
 	private int size;
 	private int originalTNum;
+	private int treasureNum;
 	
 	private Maze() {
 		
@@ -29,15 +30,6 @@ public class Maze implements Serializable{
 		return _instance;
 	}
 	
-	/**
-	public void init(int size, int originalTNum) {
-		this.size = size;
-		this.originalTNum = originalTNum;
-		treasureMap = new HashMap<Position, Integer>();
-		players = new HashMap<Integer, Player>();
-	}
-	*/
-	
 	public int getSize() {
 		return size;
 	}
@@ -52,6 +44,14 @@ public class Maze implements Serializable{
 
 	public void setOriginalTNum(int originalTNum) {
 		this.originalTNum = originalTNum;
+	}
+
+	public int getTreasureNum() {
+		return treasureNum;
+	}
+
+	public void setTreasureNum(int treasureNum) {
+		this.treasureNum = treasureNum;
 	}
 
 	public Map<Position, Integer> getTreasureMap() {

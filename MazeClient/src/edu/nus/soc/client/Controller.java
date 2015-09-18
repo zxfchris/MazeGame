@@ -14,6 +14,7 @@ import edu.nus.soc.service.PlayerService;
 import edu.nus.soc.service.impl.CallBackServiceImpl;
 
 public class Controller {
+	private static Maze				maze;
 	private static Player			player;
 	private static PlayerService	service;			//services provided by game server
 	private static CallBackService	callbackService;	//callback service to be called by game server
@@ -32,47 +33,12 @@ public class Controller {
 		service			= (PlayerService) Naming.lookup("rmi://127.0.0.1:8888/playerService");
 	}
 	
-	private static boolean isMovable(Position pos, Movement m, int size) {
-		if (size <= 0) {
-			return false;
-		}
-		boolean flag = true;
-		switch (m) {
-		case S:
-			if (pos.getY()==size) {
-				flag = false;
-			}
-			break;
-		case N:
-			if (pos.getY()==1) {
-				flag = false;
-			}
-			break;
-		case E:
-			if (pos.getX()==size) {
-				flag = false;
-			}
-			break;
-		case W:
-			if (pos.getX()==1) {
-				flag = false;
-			}
-			break;
-		case NOMOVE:
-			break;
-		default:
-			flag = false;
-			break;
-		}
-		return flag;
-	}
-	
 	public Maze move(Movement m) throws RemoteException {
 		if (this.player == null) {
 			System.out.println("The game hasn't started, please wait...");
 			return null;
 		}
-		return service.move(player, m);
+		return service.move(player.getId(), m);
 	}
 	
 	public Player joinGame() throws RemoteException {
@@ -93,6 +59,20 @@ public class Controller {
 
 	public void setPlayer(Player player) {
 		this.player = player;
+	}
+
+	public void update(Maze maze) {
+		// TODO Auto-generated method stub
+		player = maze.getPlayers().get(player.getId());
+		this.maze = maze;
+	}
+
+	public static Maze getMaze() {
+		return maze;
+	}
+
+	public static void setMaze(Maze maze) {
+		Controller.maze = maze;
 	}
 
 }

@@ -28,6 +28,7 @@ public class GameServiceImpl implements GameService{
 		Maze maze = Maze.get();
 		maze.setSize(size);
 		maze.setOriginalTNum(originalTNum);
+		maze.setTreasureNum(originalTNum);
 		System.out.println("Maze size and treasure num are initiated!");
 		
 		Map<Position, Integer> treasureMap = Util.randomTreasures(originalTNum, size);

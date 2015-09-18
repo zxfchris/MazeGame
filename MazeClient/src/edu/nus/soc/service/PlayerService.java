@@ -12,5 +12,5 @@ public interface PlayerService extends Remote{
 	
 	boolean quitGame(int playerId) throws RemoteException;  //client quit game
 	
-	Maze move(Player player, Movement m) throws RemoteException;
+	Maze move(Integer playerId, Movement m) throws RemoteException;
 }

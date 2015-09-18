@@ -32,9 +32,10 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 			for (Integer key : callbackMap.keySet()) {
 				System.out.println("callback key: " + key);
 				try {
-					callbackMap.get(key).startGame();
+					callbackMap.get(key).startGame(key, Maze.get());
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
+					System.out.println(" exception: " + key);
 					e.printStackTrace();
 				}
 			}
@@ -65,7 +66,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		if (Maze.get().getPlayers() == null ||
 				0 == Maze.get().getPlayers().size()) {
 			//execute callback functions to notify clients the start of Game.
-			timer.schedule(startGame, 1000 * 20);
+			timer.schedule(startGame, 1000 * 5);
 			//gameService.initGame();
 		}
 		Map<Integer, Player> players = Maze.get().getPlayers();
@@ -103,10 +104,11 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 	}
 
 	@Override
-	public Maze move(Player player, Movement m) throws RemoteException{
+	public Maze move(Integer playerId, Movement m) throws RemoteException{
 		if (false == isGameStarted()) {
 			return null;
 		}
+		Player player = Maze.get().getPlayers().get(playerId);
 		Position currentPos = player.getPos();
 		int x = currentPos.getX();
 		int y = currentPos.getY();
@@ -128,7 +130,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		}
 		player.setPos(currentPos);
 		collectTreasures(player);
-		System.out.println("Player moved!");
+		System.out.println("Player " + player.getId() + " moved!");
 		return Maze.get();
 	}
 	
@@ -136,12 +138,13 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		Position currentPos = player.getPos();
 		Maze maze = Maze.get();
 		Map<Position, Integer> treasureMap = maze.getTreasureMap();
-		if (treasureMap.containsKey(currentPos)) {
+		if (treasureMap.containsKey(currentPos)) {			//collect treasure
 			int cellTreasure = treasureMap.get(currentPos);
 			int treasureNum = cellTreasure + player.getTreasureNum();
 			player.setTreasureNum(treasureNum);
 			System.out.println("Player "+ player.getId() +"collected "+
 					cellTreasure +" treasures");
+			Maze.get().setTreasureNum(Maze.get().getTreasureNum() - cellTreasure);
 			treasureMap.put(currentPos, 0);
 			maze.setTreasureMap(treasureMap);
 		}

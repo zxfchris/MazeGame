@@ -25,6 +25,9 @@ public class Client {
 		}
 		
 		try {
+			/**
+			 * join game.
+			 */
 			player = controller.joinGame();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -49,6 +52,9 @@ public class Client {
 				if (str.equals("Q")) {
 					System.out.println("Player would like to quit game.");
 					try {
+						/**
+						 * quit game.
+						 */
 						controller.quitGame();
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
@@ -60,10 +66,31 @@ public class Client {
 				if (null == move)
 				{
 					System.out.println("Sorry, your input is invalid, please try again.");
+				} else if (false == Util.isMovable(controller.getPlayer().getPos(), move, Controller.getMaze().getSize()) ) {
+					System.out.println("Sorry, you have reached the boundary, please try again.");
 				} else {
 					try {
+						/**
+						 * move.
+						 */
 						maze = controller.move(move);
-						Util.printMaze(maze);
+						
+						controller.update(maze);
+						Util.printMaze(player.getId(), maze);
+						System.out.println("treasures in maze: " + Controller.getMaze().getTreasureNum());
+						if (0 == Controller.getMaze().getTreasureNum())
+						{
+							if (Util.isWinner(player.getId(), maze)) {
+								System.out.println("******************************************************\n"
+										+ 		   "**        Game over. Congratulations, you win!      **\n"
+										+ 		   "******************************************************\n");
+							}
+							else {
+								System.out.println("******************************************************\n\n"
+										+ 		   "**            Game over. Sorry, you lose.           **\n"
+										+ 		   "******************************************************\n");
+							}
+						}
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

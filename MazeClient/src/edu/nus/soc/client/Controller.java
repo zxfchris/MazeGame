@@ -68,9 +68,12 @@ public class Controller {
 	}
 	
 	public Maze move(Movement m) throws RemoteException {
-		if (this.player == null) {
+		if (player == null ) {
 			System.out.println("The game hasn't started, please wait...");
 			return null;
+		} else if (!(isMovable(player.getPos(), m, Maze.get().getSize()))){
+			System.out.println("Your movement is illegal. Please choose another movement.");
+			return Maze.get();
 		}
 		return service.move(player, m);
 	}
@@ -80,7 +83,7 @@ public class Controller {
 	}
 	
 	public boolean quitGame() throws RemoteException {
-		if (null == this.player) {
+		if (null == player) {
 			System.out.println("The game hasn't started, you cannot quit at this time...");
 			return false;
 		}

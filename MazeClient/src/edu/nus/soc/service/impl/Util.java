@@ -10,6 +10,9 @@ import edu.nus.soc.model.Position;
 public class Util {
 
 	public static void printMaze(Maze maze) {
+		if (maze == null) {
+			return;
+		}
 		Map<Position, Integer> 	mazeMap = maze.getTreasureMap();
 		Map<Integer, Player> 	players = maze.getPlayers();
 		Map<Position, Integer> 	playerMap = new HashMap<Position, Integer>();

@@ -20,14 +20,12 @@ public class Client {
 		try {
 			controller = new Controller();
 		} catch (RemoteException | MalformedURLException | NotBoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
 		try {
 			player = controller.joinGame();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -65,7 +63,6 @@ public class Client {
 						maze = controller.move(move);
 						Util.printMaze(maze);
 					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -73,7 +70,6 @@ public class Client {
 				try {
 					Thread.sleep(10);	//wait for 10 milliseconds and try again
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

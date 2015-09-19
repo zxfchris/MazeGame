@@ -3,7 +3,6 @@ package edu.nus.soc.service.impl;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,8 +14,6 @@ import edu.nus.soc.service.CallBackService;
 public class GameController {
 	private static GameController controller = null;
 	private static Object lock = new Object();
-	
-	private Scanner scanner;
 	
 	private static boolean gameStarted = false;
 	private static Timer timer = new Timer(true);
@@ -46,25 +43,18 @@ public class GameController {
 			System.out.println("Timer function starts...");
 			//execute all callback methods, notify clients game starts.
 			notifyClients();
-			setGameStarted(true);
 		}
 		
 	};
 
-	public Maze initGame(){
-		System.out.println("Please input your maze size N:");
-		scanner = new Scanner(System.in);
-		int size = scanner.nextInt();
-		System.out.println("Please input your original treasure num M:");
-		int originalTNum = scanner.nextInt();
+	public Maze initGame(int size, int originalTNum){
 		maze.setSize(size);
 		maze.setOriginalTNum(originalTNum);
 		System.out.println("Maze size and treasure num are initiated!");
 		
 		Map<Position, Integer> treasureMap = Util.randomTreasures(originalTNum, size);
 		maze.setTreasureMap(treasureMap);
-		
-		maze.setPlayers(new HashMap<Integer, Player>());
+		maze.setTreasureNum(originalTNum);
 		
 		return maze;
 	}
@@ -89,7 +79,6 @@ public class GameController {
 				0 == maze.getPlayers().size()) {
 			//execute callback functions to notify clients the start of Game.
 			timer.schedule(startGame, 1000 * 5);
-			//gameService.initGame();
 		}
 		Map<Integer, Player> players = maze.getPlayers();
 
@@ -102,7 +91,7 @@ public class GameController {
 		 * store client callback in hash map.
 		 */
 //		callbackMap.put(currentId, callbackService);
-		this.addCallbackService(currentId, callbackService);
+		addCallbackService(currentId, callbackService);
 		
 		maze.setCurrentId(currentId + 1);
 		currentId = maze.getCurrentId();
@@ -124,6 +113,7 @@ public class GameController {
 					e.printStackTrace();
 				}
 			}
+			setGameStarted(true);
 		}
 		
 	}
@@ -132,7 +122,7 @@ public class GameController {
 		callbackMap.remove(playerId);
 	}
 	
-	public void addCallbackService(int playerId, CallBackService callbackService) {
+	public static void addCallbackService(int playerId, CallBackService callbackService) {
 		callbackMap.put(playerId, callbackService);
 	}
 

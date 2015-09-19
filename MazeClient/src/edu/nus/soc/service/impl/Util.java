@@ -9,7 +9,6 @@ import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
 
 public class Util {
-	
 	private static void printPlayer(Player player) {
 		System.out.println("Player " + player.getId() + " is in position("
 				+ player.getPos().getX() + "," + player.getPos().getY() + ")"
@@ -17,6 +16,10 @@ public class Util {
 	}
 	
 	public static void printMaze(Integer key, Maze maze) {
+		if (maze == null) {
+			return;
+		}
+		
 		Map<Position, Integer> 	mazeMap = maze.getTreasureMap();
 		Map<Integer, Player> 	players = maze.getPlayers();
 		Map<Position, Integer> 	playerMap = new HashMap<Position, Integer>();
@@ -102,8 +105,14 @@ public class Util {
 		}
 		if (winnerId == playerId 
 				|| maze.getPlayers().get(playerId).getTreasureNum() == maze.getPlayers().get(winnerId).getTreasureNum()) {
+			System.out.println("******************************************************\n"
+					+ 		   "**        Game over. Congratulations, you win!      **\n"
+					+ 		   "******************************************************\n");
 			return true;
 		}
+		System.out.println("******************************************************\n\n"
+				+ 		   "**            Game over. Sorry, you lose.           **\n"
+				+ 		   "******************************************************\n");
 		return false;
 	}
 }

@@ -6,5 +6,5 @@ import java.rmi.RemoteException;
 import edu.nus.soc.model.Maze;
 
 public interface CallBackService extends Remote{
-	void startGame(Integer playerId, Maze maze) throws RemoteException;
+	void notifyGameStart(Integer playerId, Maze maze) throws RemoteException;
 }

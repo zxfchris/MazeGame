@@ -11,17 +11,12 @@ public class CallBackServiceImpl extends UnicastRemoteObject implements CallBack
 
 	public CallBackServiceImpl() throws RemoteException {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void startGame(Integer playerId, Maze maze) throws RemoteException {
-		// TODO Auto-generated method stub
+	public void notifyGameStart(Integer playerId, Maze maze) throws RemoteException {
 		System.out.println("Game started, now you can move!");
 		
 		Util.printMaze(playerId, maze);

@@ -5,14 +5,11 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
-import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Player;
-import edu.nus.soc.service.impl.Util;
 
 public class Client {
 	private static Player player 	= null;
-	private static Maze	  maze		= null;
 	private static Scanner scanner  = new Scanner(System.in);
 	private static Controller controller = null;
 	
@@ -20,7 +17,6 @@ public class Client {
 		try {
 			controller = new Controller();
 		} catch (RemoteException | MalformedURLException | NotBoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -30,7 +26,6 @@ public class Client {
 			 */
 			player = controller.joinGame();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -57,50 +52,20 @@ public class Client {
 						 */
 						controller.quitGame();
 					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					System.exit(0);
 				}
 				Movement move = Movement.getMovementByString(str);
-				if (null == move)
-				{
-					System.out.println("Sorry, your input is invalid, please try again.");
-				} else if (false == Util.isMovable(controller.getPlayer().getPos(), move, Controller.getMaze().getSize()) ) {
-					System.out.println("Sorry, you have reached the boundary, please try again.");
-				} else {
-					try {
-						/**
-						 * move.
-						 */
-						maze = controller.move(move);
-						
-						controller.update(maze);
-						Util.printMaze(player.getId(), maze);
-						System.out.println("treasures in maze: " + Controller.getMaze().getTreasureNum());
-						if (0 == Controller.getMaze().getTreasureNum())
-						{
-							if (Util.isWinner(player.getId(), maze)) {
-								System.out.println("******************************************************\n"
-										+ 		   "**        Game over. Congratulations, you win!      **\n"
-										+ 		   "******************************************************\n");
-							}
-							else {
-								System.out.println("******************************************************\n\n"
-										+ 		   "**            Game over. Sorry, you lose.           **\n"
-										+ 		   "******************************************************\n");
-							}
-						}
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				try {
+					controller.move(move);
+				} catch (RemoteException e) {
+					e.printStackTrace();
 				}
 			} else {
 				try {
 					Thread.sleep(10);	//wait for 10 milliseconds and try again
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

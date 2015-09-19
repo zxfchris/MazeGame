@@ -45,12 +45,7 @@ public class Controller {
 			return maze;
 		} 
 		maze = service.move(player.getId(), move);
-		update(maze);
-		Util.printMaze(player.getId(), maze);
-		System.out.println("treasures in maze: " + maze.getTreasureNum());
-		if (0 == maze.getTreasureNum()){
-			Util.isWinner(player.getId(), maze);
-		}
+		
 		return maze;
 	}
 	

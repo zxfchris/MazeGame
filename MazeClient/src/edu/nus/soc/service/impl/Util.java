@@ -30,30 +30,42 @@ public class Util {
 			Position playerPos = p.getPos();
 			if (playerMap.containsKey(playerPos)) {
 				int cellPlayerNum = playerMap.get(playerPos);
-				playerMap.put(playerPos, cellPlayerNum++);
+				playerMap.put(playerPos, cellPlayerNum + 1);
 			} else {
 				playerMap.put(playerPos, 1);
 			}
 		}
-
+		
+		System.out.println("---------------------------------------");
 		printPlayer(player);
+		System.out.println("---------------------------------------");
 		for (int j=0; j<maze.getSize(); j++) {
 			for (int i=0; i<maze.getSize(); i++) {
 				Position pos = new Position(i, j);
-				if (mazeMap.containsKey(pos)) {
-					System.out.print("T"+mazeMap.get(pos)+"\t");
-				} else if(playerMap.containsKey(pos)) {
+				
+				if(playerMap.containsKey(pos)) {
 					if (players.get(key).getPos().equals(pos)) {
-						System.out.print("[P"+playerMap.get(pos)+"]\t");
+						if (mazeMap.containsKey(pos)) {
+							System.out.print("[P"+playerMap.get(pos)+"]T"+mazeMap.get(pos)+"\t");
+						} else {
+							System.out.print("[P"+playerMap.get(pos)+"]\t");
+						}
 					} else {
-						System.out.print("P"+playerMap.get(pos)+"\t");
+						if (mazeMap.containsKey(pos)) {
+							System.out.print("P"+playerMap.get(pos)+"T"+mazeMap.get(pos)+"\t");
+						} else {
+							System.out.print("P"+playerMap.get(pos)+"\t");
+						}
 					}
+				} else if (mazeMap.containsKey(pos)) {
+					System.out.print("T"+mazeMap.get(pos)+"\t");
 				} else {
 					System.out.print("X\t");
 				}
 			}
 			System.out.println();
 		}
+		System.out.println("---------------------------------------");
 	}
 	
 	public static boolean isMovable(Position pos, Movement m, int size) {
@@ -98,21 +110,17 @@ public class Util {
 		int maxTreasureNum = 0;
 		int	winnerId = 0;
 		for (Integer playerIdx : maze.getPlayers().keySet()) {
-			if (maze.getPlayers().get(playerIdx).getTreasureNum() > maxTreasureNum)
-			{
+			System.out.println("player " + playerIdx + " got " + maze.getPlayers().get(playerIdx).getTreasureNum() + "treasures.");
+			if (maze.getPlayers().get(playerIdx).getTreasureNum() > maxTreasureNum) {
 				winnerId = playerIdx;
+				maxTreasureNum = maze.getPlayers().get(playerIdx).getTreasureNum();
 			}
 		}
 		if (winnerId == playerId 
 				|| maze.getPlayers().get(playerId).getTreasureNum() == maze.getPlayers().get(winnerId).getTreasureNum()) {
-			System.out.println("******************************************************\n"
-					+ 		   "**        Game over. Congratulations, you win!      **\n"
-					+ 		   "******************************************************\n");
 			return true;
 		}
-		System.out.println("******************************************************\n\n"
-				+ 		   "**            Game over. Sorry, you lose.           **\n"
-				+ 		   "******************************************************\n");
+		
 		return false;
 	}
 }

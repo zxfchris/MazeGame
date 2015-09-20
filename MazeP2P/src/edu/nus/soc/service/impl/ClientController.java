@@ -1,4 +1,4 @@
-package edu.nus.soc.client;
+package edu.nus.soc.service.impl;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -11,9 +11,9 @@ import edu.nus.soc.model.Player;
 import edu.nus.soc.service.CallBackService;
 import edu.nus.soc.service.PlayerService;
 import edu.nus.soc.service.impl.CallBackServiceImpl;
-import edu.nus.soc.service.impl.Util;
+import edu.nus.soc.util.Util;
 
-public class Controller {
+public class ClientController {
 	private static Maze				maze = Maze.get();
 	private static Player			player;
 	private static PlayerService	service;			//services provided by game server
@@ -25,10 +25,10 @@ public class Controller {
 	}
 
 	public static void setGameStarted(boolean gameStarted) {
-		Controller.gameStarted = gameStarted;
+		ClientController.gameStarted = gameStarted;
 	}
 
-	public Controller() throws RemoteException, MalformedURLException, NotBoundException {
+	public ClientController() throws RemoteException, MalformedURLException, NotBoundException {
 		callbackService = new CallBackServiceImpl();
 		service			= (PlayerService) Naming.lookup("rmi://127.0.0.1:8888/playerService");
 	}
@@ -79,7 +79,7 @@ public class Controller {
 	}
 
 	public static void setMaze(Maze maze) {
-		Controller.maze = maze;
+		ClientController.maze = maze;
 	}
 
 }

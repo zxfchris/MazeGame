@@ -14,6 +14,7 @@ import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
 import edu.nus.soc.service.CallBackService;
 import edu.nus.soc.service.PlayerService;
+import edu.nus.soc.service.controller.ServerController;
 
 public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerService{
 
@@ -25,6 +26,29 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		super();
 	}
 
+	private static void collectTreasures(Player player) {
+		
+		Position currentPos = player.getPos();
+		Map<Position, Integer> treasureMap = maze.getTreasureMap();
+		
+		if (treasureMap.containsKey(currentPos)) {			//collect treasure
+			int cellTreasure = treasureMap.get(currentPos);
+			int treasureNum = cellTreasure + player.getTreasureNum();
+			player.setTreasureNum(treasureNum);
+			
+			System.out.println("Player "+ player.getId() +"collected "+
+					cellTreasure +" treasures");
+			Maze.get().setTreasureNum(Maze.get().getTreasureNum() - cellTreasure);
+			
+			treasureMap.put(currentPos, 0);
+			maze.setTreasureMap(treasureMap);
+		}
+		
+		Map<Integer, Player> players = maze.getPlayers();
+		players.put(player.getId(), player);
+		maze.setPlayers(players);
+	}
+	
 	@Override
 	public Player joinGame(CallBackService client) throws RemoteException{
 		if (true == serverController.isGameStarted()) {
@@ -96,29 +120,6 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		
 		System.out.println("Player " + player.getId() + " moved!");
 		return maze;
-	}
-	
-	private static void collectTreasures(Player player) {
-		
-		Position currentPos = player.getPos();
-		Map<Position, Integer> treasureMap = maze.getTreasureMap();
-		
-		if (treasureMap.containsKey(currentPos)) {			//collect treasure
-			int cellTreasure = treasureMap.get(currentPos);
-			int treasureNum = cellTreasure + player.getTreasureNum();
-			player.setTreasureNum(treasureNum);
-			
-			System.out.println("Player "+ player.getId() +"collected "+
-					cellTreasure +" treasures");
-			Maze.get().setTreasureNum(Maze.get().getTreasureNum() - cellTreasure);
-			
-			treasureMap.put(currentPos, 0);
-			maze.setTreasureMap(treasureMap);
-		}
-		
-		Map<Integer, Player> players = maze.getPlayers();
-		players.put(player.getId(), player);
-		maze.setPlayers(players);
 	}
 
 	@Override

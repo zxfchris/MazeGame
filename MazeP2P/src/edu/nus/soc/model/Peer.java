@@ -113,4 +113,12 @@ public class Peer implements Serializable{
 			System.out.println("----------------------------------");
 		}
 	}
+	
+	public Node getNodeById(Integer playerId) {
+		return nodeMap.get(playerId);
+	}
+	
+	public boolean detectNodeAllive(Node node) {
+		return false;
+	}
 }

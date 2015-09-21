@@ -1,4 +1,4 @@
-package edu.nus.soc.service.impl;
+package edu.nus.soc.service.controller;
 
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -17,6 +17,7 @@ import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
 import edu.nus.soc.service.CallBackService;
 import edu.nus.soc.service.PlayerService;
+import edu.nus.soc.service.impl.PlayerServiceImpl;
 import edu.nus.soc.util.Util;
 
 public class ServerController {

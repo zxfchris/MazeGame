@@ -1,8 +1,9 @@
 package edu.nus.soc.model;
 
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 
-public class Node {
+public class Node implements Serializable{
 
 	private String ip = null;
 	private int port = 0;
@@ -28,10 +29,6 @@ public class Node {
 	public void setPort(int port) {
 		this.port = port;
 	}
-	
-	public static String ipToString() {
-		return null;
-	}	
 	
 	public boolean isMeaningfulAddr() {
 		if (ip.equals("") || 0 == port) {

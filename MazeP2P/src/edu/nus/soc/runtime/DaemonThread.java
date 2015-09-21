@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.service.PlayerService;
-import edu.nus.soc.service.impl.ClientController;
+import edu.nus.soc.service.controller.ClientController;
 
 /**
  * daemon thread is used for checking and updating server info

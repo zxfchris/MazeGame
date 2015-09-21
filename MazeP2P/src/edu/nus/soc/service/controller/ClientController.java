@@ -1,4 +1,4 @@
-package edu.nus.soc.service.impl;
+package edu.nus.soc.service.controller;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;

@@ -9,8 +9,8 @@ import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
-import edu.nus.soc.service.impl.ClientController;
-import edu.nus.soc.service.impl.ServerController;
+import edu.nus.soc.service.controller.ClientController;
+import edu.nus.soc.service.controller.ServerController;
 import edu.nus.soc.util.Util;
 
 public class GameEntrance {
@@ -67,9 +67,7 @@ public class GameEntrance {
 		}
 		
 		try {
-			/**
-			 * join game.
-			 */
+			 //join game.
 			player = controller.joinGame();
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -95,9 +93,7 @@ public class GameEntrance {
 				if (str.equals("Q")) {
 					System.out.println("Player would like to quit game.");
 					try {
-						/**
-						 * quit game.
-						 */
+						 // quit game.
 						controller.quitGame();
 					} catch (RemoteException e) {
 						e.printStackTrace();

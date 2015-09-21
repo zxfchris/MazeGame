@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 
 import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
+import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
 
 public interface PlayerService extends Remote{
@@ -14,5 +15,8 @@ public interface PlayerService extends Remote{
 	
 	Maze move(Integer playerId, Movement m) throws RemoteException;
 	
+	//following methods are used for updating peer info
 	boolean detectServerAlive() throws RemoteException;
+	
+	Peer updatePeerInfo() throws RemoteException;
 }

@@ -6,6 +6,7 @@ public class Node {
 
 	private String ip = null;
 	private int port = 0;
+	private boolean isAllive = true;
 	
 	public Node(String ip, int port) {
 		super();
@@ -26,10 +27,6 @@ public class Node {
 	}
 	public void setPort(int port) {
 		this.port = port;
-	}
-	
-	public static String rmiAddressConstruct(int ip, int port) {
-		return null;
 	}
 	
 	public static String ipToString() {
@@ -68,5 +65,11 @@ public class Node {
 		if (port != other.port)
 			return false;
 		return true;
+	}
+	public boolean isAllive() {
+		return isAllive;
+	}
+	public void setAllive(boolean isAllive) {
+		this.isAllive = isAllive;
 	}
 }

@@ -18,5 +18,7 @@ public interface PlayerService extends Remote{
 	//following methods are used for updating peer info
 	boolean detectServerAlive() throws RemoteException;	//used by client to examine whether server is still alive
 	
-	Peer updatePeerInfo() throws RemoteException;
+	Peer updatePeerInfo() throws RemoteException;  //client would like to update peer info intensively.
+	
+	Maze synchronizeMaze() throws RemoteException; //used between primary server and secondary server.
 }

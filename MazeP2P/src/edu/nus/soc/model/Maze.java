@@ -14,7 +14,6 @@ public class Maze implements Serializable{
 	private int size;
 	private int originalTNum;
 	private int treasureNum;
-	public static Peer peer = Peer.get();
 	
 	private Maze() {
 		this.treasureMap = new HashMap<Position, Integer>();

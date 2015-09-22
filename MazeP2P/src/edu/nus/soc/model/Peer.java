@@ -121,4 +121,13 @@ public class Peer implements Serializable{
 	public boolean detectNodeAllive(Node node) {
 		return false;
 	}
+	
+	public Node selectServer() {
+		for (Integer key : nodeMap.keySet()) {
+			if (false == nodeMap.get(key).equals(primaryServer)) {
+				
+			}
+		}
+		return null;
+	}
 }

@@ -134,4 +134,10 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		return Peer.get();
 	}
 
+	@Override
+	public Maze synchronizeMaze() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

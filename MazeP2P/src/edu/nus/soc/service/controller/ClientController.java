@@ -21,20 +21,9 @@ public class ClientController {
 	private static Player			player;
 	private static PlayerService	primaryService = null;
 	private static PlayerService	secondaryService = null;
-	
-	private static Node  			primaryServer;
-	private static Node  			secondaryServer;
 
 	private static CallBackService	callbackService;	//callback service to be called by game server
 	private static boolean			gameStarted = false;
-	
-	/*public static PlayerService getService() {
-		return service;
-	}
-
-	public static void setService(PlayerService service) {
-		ClientController.service = service;
-	}*/
 	
 	public static PlayerService getPrimaryService() {
 		return primaryService;

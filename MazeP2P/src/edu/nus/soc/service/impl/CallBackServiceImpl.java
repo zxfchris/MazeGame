@@ -26,7 +26,7 @@ public class CallBackServiceImpl extends UnicastRemoteObject implements CallBack
 		ClientController.setGameStarted(true);
 		
 		ClientController.setPeer(peer);
-		maze.peer.printNodeMap();
+		peer.printNodeMap();
 	}
 
 	@Override

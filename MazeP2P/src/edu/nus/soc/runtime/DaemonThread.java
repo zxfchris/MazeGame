@@ -29,7 +29,7 @@ public class DaemonThread implements Runnable {
 		while (true) {
 			System.out.println("thread running..." + t);
 			try {
-				if (Peer.isPrimaryServer()) {
+				if (Peer.get().isPrimaryServer()) {
 					//if RMI service is not running, register RMI service
 					//TODO
 					if (null == ClientController.getSecondaryService()) {
@@ -46,7 +46,7 @@ public class DaemonThread implements Runnable {
 						}
 				} 
 				
-				else if (Peer.isSecondaryServer()) {
+				else if (Peer.get().isSecondaryServer()) {
 					//if RMI service is not running, register RMI service
 					//TODO
 					if (null == ClientController.getPrimaryService()) {

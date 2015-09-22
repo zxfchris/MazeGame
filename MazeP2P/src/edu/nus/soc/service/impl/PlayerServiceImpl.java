@@ -66,7 +66,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		}
 		int port = Peer.allocateNewPort();
 		Node node = new Node(ipaddr, port);
-		Peer.addNodeToNodeMap(player.getId(), node);
+		Peer.get().addNodeToNodeMap(player.getId(), node);
 		
 		return player;
 	}

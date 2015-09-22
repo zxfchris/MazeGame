@@ -14,7 +14,7 @@ import edu.nus.soc.service.controller.ServerController;
 import edu.nus.soc.util.Util;
 
 public class GameEntrance {
-	private static Peer	peer = new Peer();
+	private static Peer	peer = Peer.get();
 	private static Maze	maze = null;
 	private static Player	player = null;
 	private static Scanner scanner  = new Scanner(System.in);
@@ -29,8 +29,8 @@ public class GameEntrance {
 		} else {
 			if (args[0].equals("-s")) {
 				System.out.println("this peer act as a server initially.");
-				Peer.getLocalNode().setIp(Util.defaultIp);
-				Peer.getLocalNode().setPort(Util.defaultPort);
+				peer.getLocalNode().setIp(Util.defaultIp);
+				peer.getLocalNode().setPort(Util.defaultPort);
 				gameController.RegistRMIService();
 				try {
 					System.out.println("Server starts!");

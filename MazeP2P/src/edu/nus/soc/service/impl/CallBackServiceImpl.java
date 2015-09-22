@@ -26,8 +26,9 @@ public class CallBackServiceImpl extends UnicastRemoteObject implements CallBack
 		ClientController.setGameStarted(true);
 		
 		ClientController.setPeer(peer);
-		System.out.println("node number: " + Peer.get().getNodeMap().size());
-		Peer.printNodeMap();
+
+		peer.printNodeMap();
+
 	}
 
 	@Override

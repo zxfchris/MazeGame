@@ -54,7 +54,7 @@ public class ServerController {
 			//execute all callback methods, notify clients game starts.
 			notifyClients();
 			//for debug, print joined notes
-			Peer.printNodeMap();
+			Peer.get().printNodeMap();
 		}
 		
 	};
@@ -141,8 +141,8 @@ public class ServerController {
 		}
 		try {
 			String ip = InetAddress.getLocalHost().getHostAddress();
-			LocateRegistry.createRegistry(Peer.getLocalNode().getPort());
-			Naming.rebind(Util.getRMIStringByIpPort(ip, Peer.getLocalNode().getPort()), playerService);
+			LocateRegistry.createRegistry(Peer.get().getLocalNode().getPort());
+			Naming.rebind(Util.getRMIStringByIpPort(ip, Peer.get().getLocalNode().getPort()), playerService);
 		} catch (UnknownHostException | RemoteException | MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

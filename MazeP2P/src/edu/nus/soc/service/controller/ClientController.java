@@ -1,4 +1,4 @@
-package edu.nus.soc.service.impl;
+package edu.nus.soc.service.controller;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -7,6 +7,8 @@ import java.rmi.RemoteException;
 
 import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
+import edu.nus.soc.model.Node;
+import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
 import edu.nus.soc.service.CallBackService;
 import edu.nus.soc.service.PlayerService;
@@ -15,11 +17,41 @@ import edu.nus.soc.util.Util;
 
 public class ClientController {
 	private static Maze				maze = Maze.get();
+	private static Peer				peer = Peer.get();
 	private static Player			player;
-	private static PlayerService	service;			//services provided by game server
+	private static PlayerService	primaryService = null;
+	private static PlayerService	secondaryService = null;
+	
+	private static Node  			primaryServer;
+	private static Node  			secondaryServer;
+
 	private static CallBackService	callbackService;	//callback service to be called by game server
 	private static boolean			gameStarted = false;
 	
+	/*public static PlayerService getService() {
+		return service;
+	}
+
+	public static void setService(PlayerService service) {
+		ClientController.service = service;
+	}*/
+	
+	public static PlayerService getPrimaryService() {
+		return primaryService;
+	}
+
+	public static void setPrimaryService(PlayerService primaryService) {
+		ClientController.primaryService = primaryService;
+	}
+	
+	public static PlayerService getSecondaryService() {
+		return secondaryService;
+	}
+
+	public static void setSecondaryService(PlayerService secondaryService) {
+		ClientController.secondaryService = secondaryService;
+	}
+
 	public static boolean isGameStarted() {
 		return gameStarted;
 	}
@@ -30,7 +62,7 @@ public class ClientController {
 
 	public ClientController() throws RemoteException, MalformedURLException, NotBoundException {
 		callbackService = new CallBackServiceImpl();
-		service			= (PlayerService) Naming.lookup("rmi://127.0.0.1:8888/playerService");
+		setPrimaryService((PlayerService) Naming.lookup(Util.getRMIStringByIpPort(Util.defaultIp, Util.defaultPort)));
 	}
 	
 	public Maze move(Movement move) throws RemoteException {
@@ -44,13 +76,13 @@ public class ClientController {
 			System.out.println("Sorry, you have reached the boundary, please try again.");
 			return maze;
 		} 
-		maze = service.move(player.getId(), move);
+		maze = primaryService.move(player.getId(), move);
 		
 		return maze;
 	}
 	
 	public Player joinGame() throws RemoteException {
-		return service.joinGame(callbackService);
+		return primaryService.joinGame(callbackService);
 	}
 	
 	public boolean quitGame() throws RemoteException {
@@ -58,7 +90,18 @@ public class ClientController {
 			System.out.println("The game hasn't started, you cannot quit at this time...");
 			return false;
 		}
-		return service.quitGame(player.getId());
+		return primaryService.quitGame(player.getId());
+	}
+	
+	public static boolean detectServerAllive(int serverIdx) throws RemoteException {
+		if (0 == serverIdx) {
+			return primaryService.detectServerAlive();
+		} else if (1 == serverIdx) {
+			return secondaryService.detectServerAlive();
+		} else {
+			System.out.println("server index invalid.");
+			return false;
+		}
 	}
 
 	public Player getPlayer() {
@@ -80,6 +123,14 @@ public class ClientController {
 
 	public static void setMaze(Maze maze) {
 		ClientController.maze = maze;
+	}
+
+	public static Peer getPeer() {
+		return peer;
+	}
+
+	public static void setPeer(Peer peer) {
+		ClientController.peer = peer;
 	}
 
 }

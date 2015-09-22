@@ -11,6 +11,7 @@ import edu.nus.soc.model.Position;
 
 public class Util {
 	public static int defaultPort = 8888;
+	public static int allocatePort = defaultPort;
 	public static String defaultIp = "127.0.0.1";
 	
 	public static Position getRandomPos(int size) {

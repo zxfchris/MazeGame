@@ -1,15 +1,23 @@
-package edu.nus.soc.service.impl;
+package edu.nus.soc.service.controller;
 
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.UnknownHostException;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.nus.soc.model.Maze;
+import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
 import edu.nus.soc.service.CallBackService;
+import edu.nus.soc.service.PlayerService;
+import edu.nus.soc.service.impl.PlayerServiceImpl;
 import edu.nus.soc.util.Util;
 
 public class ServerController {
@@ -20,6 +28,7 @@ public class ServerController {
 	private static Timer timer = new Timer(true);
 	private static Maze maze = Maze.get();
 	private static Map<Integer,CallBackService> callbackMap = new HashMap<Integer, CallBackService>();
+	private static PlayerService playerService = null;
 	
 	private ServerController() {
 		
@@ -44,6 +53,8 @@ public class ServerController {
 			System.out.println("Timer function starts...");
 			//execute all callback methods, notify clients game starts.
 			notifyClients();
+			//for debug, print joined notes
+			Peer.printNodeMap();
 		}
 		
 	};
@@ -91,7 +102,6 @@ public class ServerController {
 		/**
 		 * store client callback in hash map.
 		 */
-//		callbackMap.put(currentId, callbackService);
 		addCallbackService(currentId, callbackService);
 		
 		maze.setCurrentId(currentId + 1);
@@ -109,7 +119,8 @@ public class ServerController {
 			for (Integer key : callbackMap.keySet()) {
 				System.out.println("callback key: " + key);
 				try {
-					callbackMap.get(key).notifyGameStart(key, maze);
+					Peer.get().printNodeMap();
+					callbackMap.get(key).notifyGameStart(key, maze, Peer.get());
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -117,6 +128,25 @@ public class ServerController {
 			setGameStarted(true);
 		}
 		
+	}
+	
+	public void RegistRMIService() {
+		if (null == playerService) {
+			try {
+				playerService = new PlayerServiceImpl();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		try {
+			String ip = InetAddress.getLocalHost().getHostAddress();
+			LocateRegistry.createRegistry(Peer.getLocalNode().getPort());
+			Naming.rebind(Util.getRMIStringByIpPort(ip, Peer.getLocalNode().getPort()), playerService);
+		} catch (UnknownHostException | RemoteException | MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void removeCallbackService(int playerId) {

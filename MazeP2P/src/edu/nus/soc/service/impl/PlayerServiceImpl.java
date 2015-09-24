@@ -1,5 +1,8 @@
 package edu.nus.soc.service.impl;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
@@ -15,6 +18,7 @@ import edu.nus.soc.service.CallBackService;
 import edu.nus.soc.service.PlayerService;
 import edu.nus.soc.service.controller.ClientController;
 import edu.nus.soc.service.controller.ServerController;
+import edu.nus.soc.util.Util;
 
 public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerService{
 
@@ -128,17 +132,26 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 			System.out.println("######I am the secondary server, primary server has crashed, level"
 					+ "up myself and select another secondary server.");
 			ServerController.levelUpToPrimaryServer();
+			//select a new secondary server
+			if (Peer.get().getNodeList().size() >= 2) {
+				while (Peer.get().getNodeList().size() >= 2) {
+					try {
+						if (Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))) != null) {
+							//find active node
+						}
+					} catch (MalformedURLException | NotBoundException e) {
+						// TODO Auto-generated catch block
+						Peer.get().getNodeList().remove(1);
+					}
+				}
+			} else {
+				System.out.println("There is only one Peer remains in the system, no secondary"
+						+ "server is needed");
+			}
 			ClientController.updatePlayerService();
+			ClientController.getSecondaryService().notifySelectedAsServer();
 		}
-		
-		for (int index = 0; index < Peer.get().getNodeList().size(); index ++) {
-			peer.getNodeList().add(Peer.get().getNodeList().get(index));
-		}
-		//peer.setNodeList(Peer.get().getNodeList());
-		System.out.println("((((((((((((((((()))))))))))))))))");
-		Peer.get().printNodeList();
-		System.out.println("((((((((((((((((()))))))))))))))))");
-		peer.printNodeList();
+	
 		System.out.println("Player " + player.getId() + " moved!");
 		maze.peer.setNodeList(Peer.get().getNodeList());
 		return maze;
@@ -155,6 +168,14 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		// TODO Auto-generated method stub
 		System.out.println("<secondary>maze info synchronized from primary server.");
 		Maze.get().setMaze(maze);
+	}
+
+	@Override
+	public void notifySelectedAsServer() throws RemoteException {
+		// TODO Auto-generated method stub
+		System.out.println("this peer is selected as secondary server, update info.");
+		Peer.get().setPrimaryServer(false);
+		Peer.get().setSecondaryServer(true);
 	}
 
 }

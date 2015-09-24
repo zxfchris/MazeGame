@@ -134,12 +134,13 @@ public class ClientController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		try {
-			setSecondaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))));
-		} catch (MalformedURLException | RemoteException | NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (Peer.get().getNodeList().size() >= 2) {
+			try {
+				setSecondaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))));
+			} catch (MalformedURLException | RemoteException | NotBoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

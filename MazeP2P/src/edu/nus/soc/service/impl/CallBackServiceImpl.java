@@ -24,6 +24,8 @@ public class CallBackServiceImpl extends UnicastRemoteObject implements CallBack
 		System.out.println("Game started, now you can move!");
 		
 		Util.printMaze(playerId, maze);
+		
+		Maze.get().setMaze(maze);
 		Maze.get().setGameStarted(true);
 		
 		peer.printNodeList();
@@ -38,6 +40,7 @@ public class CallBackServiceImpl extends UnicastRemoteObject implements CallBack
 				ServerController.RegistRMIService();
 			}
 		}
+		ClientController.updatePlayerService();
 	}
 
 

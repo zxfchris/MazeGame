@@ -35,6 +35,8 @@ public class Peer implements Serializable{
 
 	public Peer () {
 		nodeList = new ArrayList<Node>();
+		isPrimaryServer = false;
+		isSecondaryServer = false;
 	}
 	
 	public static Peer get() {

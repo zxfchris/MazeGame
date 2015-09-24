@@ -1,5 +1,6 @@
 package edu.nus.soc.service.impl;
 
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -8,6 +9,7 @@ import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.service.CallBackService;
 import edu.nus.soc.service.controller.ClientController;
+import edu.nus.soc.service.controller.ServerController;
 
 public class CallBackServiceImpl extends UnicastRemoteObject implements CallBackService{
 
@@ -22,24 +24,33 @@ public class CallBackServiceImpl extends UnicastRemoteObject implements CallBack
 		System.out.println("Game started, now you can move!");
 		
 		Util.printMaze(playerId, maze);
-		ClientController.setMaze(maze);
-		ClientController.setGameStarted(true);
+		Maze.get().setGameStarted(true);
 		
-		ClientController.setPeer(peer);
-		peer.printNodeMap();
+		peer.printNodeList();
+		//set up RMI service
+		Peer.get().setNodeList(peer.getNodeList());
+		Peer.get().setLocalNode(peer.getNodeByPlayerId(playerId));
+		System.out.println("playerId:" + playerId + "nodeListSize:" + Peer.get().getNodeList().size());
+		if (null == Peer.get().getNodeByPlayerId(playerId)) {
+			System.err.println("cannot find player node.");
+		} else {
+			if (Peer.get().getLocalNode().getPort() != Util.defaultPort) {
+				ServerController.RegistRMIService();
+			}
+		}
 	}
 
-	@Override
-	public void detectAlive() throws RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
-	public void notifySelectedAsServer(Integer serverType) throws RemoteException {
+	public void notifySelectedAsServer(Maze maze, Peer peer) throws RemoteException {
 		// TODO Auto-generated method stub
-		
+		System.out.println("this peer is selected as secondary server.");
 		//peer should register RMI service dynamically
+		Maze.get().setMaze(maze);
+		Peer.get().setNodeList(peer.getNodeList());
+		Peer.get().setPrimaryServer(false);
+		Peer.get().setSecondaryServer(true);
+		ClientController.updatePlayerService();
 	}
 
 }

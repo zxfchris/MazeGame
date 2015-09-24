@@ -7,12 +7,13 @@ public class Node implements Serializable{
 
 	private String ip = null;
 	private int port = 0;
-	private boolean isAllive = true;
+	private Integer playerId = 0;
 	
-	public Node(String ip, int port) {
+	public Node(String ip, int port, Integer playerId) {
 		super();
 		this.ip = ip;
 		this.port = port;
+		this.playerId = playerId;
 	}
 	public Node() {
 		// TODO Auto-generated constructor stub
@@ -28,6 +29,12 @@ public class Node implements Serializable{
 	}
 	public void setPort(int port) {
 		this.port = port;
+	}
+	public Integer getPlayerId() {
+		return playerId;
+	}
+	public void setPlayerId(Integer playerId) {
+		this.playerId = playerId;
 	}
 	
 	public boolean isMeaningfulAddr() {
@@ -62,11 +69,5 @@ public class Node implements Serializable{
 		if (port != other.port)
 			return false;
 		return true;
-	}
-	public boolean isAllive() {
-		return isAllive;
-	}
-	public void setAllive(boolean isAllive) {
-		this.isAllive = isAllive;
 	}
 }

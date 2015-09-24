@@ -7,7 +7,6 @@ import java.rmi.RemoteException;
 
 import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
-import edu.nus.soc.model.Node;
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
 import edu.nus.soc.service.CallBackService;
@@ -17,24 +16,11 @@ import edu.nus.soc.util.Util;
 
 public class ClientController {
 	private static Maze				maze = Maze.get();
-	private static Peer				peer = Peer.get();
 	private static Player			player;
 	private static PlayerService	primaryService = null;
 	private static PlayerService	secondaryService = null;
-	
-	private static Node  			primaryServer;
-	private static Node  			secondaryServer;
 
 	private static CallBackService	callbackService;	//callback service to be called by game server
-	private static boolean			gameStarted = false;
-	
-	/*public static PlayerService getService() {
-		return service;
-	}
-
-	public static void setService(PlayerService service) {
-		ClientController.service = service;
-	}*/
 	
 	public static PlayerService getPrimaryService() {
 		return primaryService;
@@ -52,20 +38,13 @@ public class ClientController {
 		ClientController.secondaryService = secondaryService;
 	}
 
-	public static boolean isGameStarted() {
-		return gameStarted;
-	}
-
-	public static void setGameStarted(boolean gameStarted) {
-		ClientController.gameStarted = gameStarted;
-	}
-
 	public ClientController() throws RemoteException, MalformedURLException, NotBoundException {
 		callbackService = new CallBackServiceImpl();
 		setPrimaryService((PlayerService) Naming.lookup(Util.getRMIStringByIpPort(Util.defaultIp, Util.defaultPort)));
 	}
 	
-	public Maze move(Movement move) throws RemoteException {
+	public Maze move(Movement move) {
+		Peer peer = new Peer();
 		if (player == null ) {
 			System.out.println("The game hasn't started, please wait...");
 			return null;
@@ -76,30 +55,51 @@ public class ClientController {
 			System.out.println("Sorry, you have reached the boundary, please try again.");
 			return maze;
 		} 
-		maze = primaryService.move(player.getId(), move);
+		
+		System.out.println("111111111111111111");
+		peer.printNodeList();
+		System.out.println("222222222222222222");
+		try {
+			maze = primaryService.move(player.getId(), move, peer);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			try {
+				maze = secondaryService.move(player.getId(), move, peer);
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		Maze.get().setMaze(maze);
+		System.out.println("333333333333333333");
+		maze.peer.printNodeList();
+		System.out.println("444444444444444444");
+		Peer.get().setNodeList(peer.getNodeList());
+		//updatePlayerService();
 		
 		return maze;
 	}
 	
-	public Player joinGame() throws RemoteException {
-		return primaryService.joinGame(callbackService);
+	public Player joinGame() {
+		try {
+			return primaryService.joinGame(callbackService);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
-	public boolean quitGame() throws RemoteException {
+	public boolean quitGame() {
 		if (null == player) {
 			System.out.println("The game hasn't started, you cannot quit at this time...");
 			return false;
 		}
-		return primaryService.quitGame(player.getId());
-	}
-	
-	public static boolean detectServerAllive(int serverIdx) throws RemoteException {
-		if (0 == serverIdx) {
-			return primaryService.detectServerAlive();
-		} else if (1 == serverIdx) {
-			return secondaryService.detectServerAlive();
-		} else {
-			System.out.println("server index invalid.");
+		try {
+			return primaryService.quitGame(player.getId());
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -124,13 +124,21 @@ public class ClientController {
 	public static void setMaze(Maze maze) {
 		ClientController.maze = maze;
 	}
-
-	public static Peer getPeer() {
-		return peer;
-	}
-
-	public static void setPeer(Peer peer) {
-		ClientController.peer = peer;
+	
+	public static void updatePlayerService() {
+		try {
+			setPrimaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(0))));
+		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			setSecondaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))));
+		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

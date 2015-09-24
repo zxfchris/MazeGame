@@ -19,7 +19,7 @@ public class GameEntrance {
 	private static Player	player = null;
 	private static Scanner scanner  = new Scanner(System.in);
 	private static ClientController controller = null;
-	final static ServerController gameController = ServerController.getController();
+	final static ServerController serverController = ServerController.getController();
 	
 	public static void main(String[] args) {
 		System.out.println("Peer running...");
@@ -31,7 +31,9 @@ public class GameEntrance {
 				System.out.println("this peer act as a server initially.");
 				peer.getLocalNode().setIp(Util.defaultIp);
 				peer.getLocalNode().setPort(Util.defaultPort);
-				gameController.RegistRMIService();
+				peer.setPrimaryServer(true);
+				peer.setSecondaryServer(false);
+				serverController.RegistRMIService();
 				try {
 					System.out.println("Server starts!");
 					int size, originalTNum;
@@ -45,7 +47,7 @@ public class GameEntrance {
 						size = Integer.valueOf(args[0]);
 						originalTNum = Integer.valueOf(args[1]);
 					}
-					Maze maze = gameController.initGame(size, originalTNum);
+					Maze maze = serverController.initGame(size, originalTNum);
 					Util.printMaze(maze);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -66,12 +68,8 @@ public class GameEntrance {
 					+ "remote service has not established yet, please have another try later.");
 		}
 		
-		try {
-			 //join game.
-			player = controller.joinGame();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		
+		player = controller.joinGame();
 		
 		if (null == player) {
 			System.out.println("Sorry the game has started, please wait for next round.");
@@ -85,46 +83,40 @@ public class GameEntrance {
 		}
 		
 		while (true) {
-			if (true == ClientController.isGameStarted()) {
+			if (true == Maze.get().isGameStarted()) {
 				System.out.println("==============================================");
 				System.out.println("Please input your choice (S, E, N, W, NOMOVE) "
 						+ "or type 'Q' to quit the game:\n->");
 				String str = scanner.nextLine();
 				if (str.equals("Q")) {
 					System.out.println("Player would like to quit game.");
-					try {
-						 // quit game.
-						controller.quitGame();
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
+					// quit game.
+					controller.quitGame();
+
 					System.exit(0);
 				}
 				System.out.println("\n\n");
 				
 				Movement move = Movement.getMovementByString(str);
-				try {
-					maze = controller.move(move);
-					if (null == maze) {
-						System.out.println("Error, move failed.");
-					} else {
-						controller.update(maze);
-						Util.printMaze(player.getId(), maze);
-						System.out.println("remaining treasures in maze: " + maze.getTreasureNum());
-						if (0 == maze.getTreasureNum()) {
-							if (true == Util.isWinner(player.getId(), maze)) {
-								System.out.println("******************************************************\n"
-										+ 		   "**        Game over. Congratulations, you win!      **\n"
-										+ 		   "******************************************************\n");
-							} else {
-								System.out.println("******************************************************\n"
-										+ 		   "**            Game over. Sorry, you lose.           **\n"
-										+ 		   "******************************************************\n");
-							}
+
+				maze = controller.move(move);
+				if (null == maze) {
+					System.out.println("Error, move failed.");
+				} else {
+					controller.update(maze);
+					Util.printMaze(player.getId(), maze);
+					System.out.println("remaining treasures in maze: " + maze.getTreasureNum());
+					if (0 == maze.getTreasureNum()) {
+						if (true == Util.isWinner(player.getId(), maze)) {
+							System.out.println("******************************************************\n"
+									+ 		   "**        Game over. Congratulations, you win!      **\n"
+									+ 		   "******************************************************\n");
+						} else {
+							System.out.println("******************************************************\n"
+									+ 		   "**            Game over. Sorry, you lose.           **\n"
+									+ 		   "******************************************************\n");
 						}
 					}
-				} catch (RemoteException e) {
-					e.printStackTrace();
 				}
 			} else {
 				try {

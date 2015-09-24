@@ -6,6 +6,7 @@ import java.util.Random;
 
 import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
+import edu.nus.soc.model.Node;
 import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
 
@@ -179,5 +180,13 @@ public class Util {
 	
 	public static String getRMIStringByIpPort(String ip, int port) {
 		return "rmi://"+ ip + ":" + port + "/playerService";
+	}
+	
+	public static String getRMIStringByNode(Node node) {
+		if (null == node) {
+			return null;
+		} else {
+			return "rmi://"+ node.getIp() + ":" + node.getPort() + "/playerService";
+		}
 	}
 }

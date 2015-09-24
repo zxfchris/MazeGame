@@ -7,7 +7,10 @@ import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import edu.nus.soc.service.PlayerService;
@@ -20,13 +23,18 @@ public class Peer implements Serializable{
 	private static Object lock = new Object();
 	
 	private Node  			localNode = new Node();
-	private Node  			primaryServer = new Node(Util.defaultIp,Util.defaultPort);
-	private Node  			secondaryServer;
-	
-	private Map<Integer,Node> nodeMap = new HashMap<Integer,Node>();
-	
+	//private Node  			primaryServer = new Node(Util.defaultIp,Util.defaultPort);
+	//private Node  			secondaryServer;
+	private boolean			isPrimaryServer;
+	private boolean			isSecondaryServer;
+	private List<Node>		nodeList;	//nodes are stored as list, the first node in the list
+										//act as primary server, and the second node in the list
+										//act as secondary server. when a node become inactive, it
+										//will be removed from the list dynamically.
+	//private Map<Integer,Node> nodeMap = new HashMap<Integer,Node>();
+
 	public Peer () {
-		
+		nodeList = new ArrayList<Node>();
 	}
 	
 	public static Peer get() {
@@ -48,77 +56,53 @@ public class Peer implements Serializable{
 	public void setLocalNode(Node localNode) {
 		this.localNode = localNode;
 	}
-
-	public Node getPrimaryServer() {
-		return primaryServer;
-	}
-
-	public void setPrimaryServer(Node primaryServer) {
-		this.primaryServer = primaryServer;
-	}
-
-	public Node getSecondaryServer() {
-		return secondaryServer;
-	}
-
-	public void setSecondaryServer(Node secondaryServer) {
-		this.secondaryServer = secondaryServer;
-	}
-
-	public Map<Integer,Node> getNodeMap() {
-		return nodeMap;
-	}
-
-	public void setNodeMap(Map<Integer,Node> nodeMap) {
-		this.nodeMap = nodeMap;
-	}
 	
-	public boolean isPrimaryServer() {
-		if (false == localNode.isMeaningfulAddr()) {
-			return false;
-		} else if (localNode.equals(primaryServer)){
-			return true;
-		} else {
-			return false;
+	public void printNodeList() {
+		if (nodeList.size() > 0) {
+			System.out.println("primary server is: " + nodeList.get(0).getIp() + ":" + nodeList.get(0).getPort());
 		}
-	}
-	
-	public boolean isSecondaryServer() {
-		if (false == localNode.isMeaningfulAddr()) {
-			return false;
-		} else if (localNode.equals(secondaryServer)){
-			return true;
-		} else {
-			return false;
+		if (nodeList.size() > 1) {
+			System.out.println("secondary server is: " + nodeList.get(1).getIp() + ":" + nodeList.get(1).getPort());
 		}
-	}
-	
-	public void addNodeToNodeMap(Integer nodeId, Node node) {
-		nodeMap.put(nodeId, node);
-	}
-	
-	public void delNodeFromNodeMap(Integer nodeId) {
-		nodeMap.remove(nodeId);
-	}
-	
-	public static int allocateNewPort() {
-		return Util.allocatePort ++;
-	}
-	
-	public void printNodeMap() {
+		
 		System.out.println("----------------------------------");
-		for (Integer key : nodeMap.keySet()) {
-			System.out.println("no." + key + "node, ipaddr:" + nodeMap.get(key).getIp() + 
-					" port:" + nodeMap.get(key).getPort());
+		for (int index = 0; index < nodeList.size(); index++) {
+			System.out.println("No. " + index + " node, ipaddr:" + nodeList.get(index).getIp() + 
+					" port:" + nodeList.get(index).getPort());
 			System.out.println("----------------------------------");
 		}
 	}
-	
-	public Node getNodeById(Integer playerId) {
-		return nodeMap.get(playerId);
+
+	public boolean isPrimaryServer() {
+		return isPrimaryServer;
+	}
+
+	public void setPrimaryServer(boolean isPrimaryServer) {
+		this.isPrimaryServer = isPrimaryServer;
+	}
+
+	public boolean isSecondaryServer() {
+		return isSecondaryServer;
+	}
+
+	public void setSecondaryServer(boolean isSecondaryServer) {
+		this.isSecondaryServer = isSecondaryServer;
 	}
 	
-	public boolean detectNodeAllive(Node node) {
-		return false;
+	public List<Node> getNodeList() {
+		return nodeList;
+	}
+
+	public void setNodeList(List<Node> nodeList) {
+		this.nodeList = nodeList;
+	}
+	
+	public Node getNodeByPlayerId(Integer playerId) {
+		for (int index = 0; index < nodeList.size(); index ++) {
+			if (nodeList.get(index).getPlayerId().equals(playerId)) {
+				return nodeList.get(index);
+			}
+		}
+		return null;
 	}
 }

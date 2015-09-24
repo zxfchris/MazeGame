@@ -8,7 +8,6 @@ import java.util.Map;
 
 import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
-import edu.nus.soc.model.Node;
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
@@ -16,7 +15,6 @@ import edu.nus.soc.service.CallBackService;
 import edu.nus.soc.service.PlayerService;
 import edu.nus.soc.service.controller.ClientController;
 import edu.nus.soc.service.controller.ServerController;
-import edu.nus.soc.util.Util;
 
 public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerService{
 
@@ -130,15 +128,19 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 			System.out.println("######I am the secondary server, primary server has crashed, level"
 					+ "up myself and select another secondary server.");
 			ServerController.levelUpToPrimaryServer();
-			Peer.get().getNodeList().remove(0);
+			ClientController.updatePlayerService();
 		}
 		
-		peer.setNodeList(Peer.get().getNodeList());
+		for (int index = 0; index < Peer.get().getNodeList().size(); index ++) {
+			peer.getNodeList().add(Peer.get().getNodeList().get(index));
+		}
+		//peer.setNodeList(Peer.get().getNodeList());
 		System.out.println("((((((((((((((((()))))))))))))))))");
 		Peer.get().printNodeList();
 		System.out.println("((((((((((((((((()))))))))))))))))");
 		peer.printNodeList();
 		System.out.println("Player " + player.getId() + " moved!");
+		maze.peer.setNodeList(Peer.get().getNodeList());
 		return maze;
 	}
 

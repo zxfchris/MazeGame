@@ -15,6 +15,7 @@ public class Maze implements Serializable{
 	private int originalTNum;
 	private int treasureNum;
 	private boolean isGameStarted = false;
+	public Peer peer;
 	
 	private Maze() {
 		this.treasureMap = new HashMap<Position, Integer>();
@@ -22,6 +23,7 @@ public class Maze implements Serializable{
 		this.size = 0;
 		this.originalTNum = 0;
 		this.treasureNum = 0;
+		this.peer = new Peer();
 	}
 	
 	public static Maze get() {

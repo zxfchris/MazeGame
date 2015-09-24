@@ -13,12 +13,10 @@ public interface PlayerService extends Remote{
 	
 	boolean quitGame(int playerId) throws RemoteException;  //client quit game
 	
-	Maze move(Integer playerId, Movement m) throws RemoteException;
+	Maze move(Integer playerId, Movement m, Peer peer) throws RemoteException;
 	
 	//following methods are used for updating peer info
-	boolean detectServerAlive() throws RemoteException;	//used by client to examine whether server is still alive
-	
 	Peer updatePeerInfo() throws RemoteException;  //client would like to update peer info intensively.
 	
-	Maze synchronizeMaze() throws RemoteException; //used between primary server and secondary server.
+	void synchronizeMaze(Maze maze) throws RemoteException; //used between primary server and secondary server.
 }

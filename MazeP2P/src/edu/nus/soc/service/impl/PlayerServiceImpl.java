@@ -14,7 +14,9 @@ import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
 import edu.nus.soc.service.CallBackService;
 import edu.nus.soc.service.PlayerService;
+import edu.nus.soc.service.controller.ClientController;
 import edu.nus.soc.service.controller.ServerController;
+import edu.nus.soc.util.Util;
 
 public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerService{
 
@@ -51,7 +53,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 	
 	@Override
 	public Player joinGame(CallBackService client) throws RemoteException{
-		if (true == serverController.isGameStarted()) {
+		if (true == Maze.get().isGameStarted()) {
 			return null;
 		}
 
@@ -64,16 +66,13 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		int port = Peer.allocateNewPort();
-		Node node = new Node(ipaddr, port);
-		Peer.get().addNodeToNodeMap(player.getId(), node);
 		
 		return player;
 	}
 
 	@Override
 	public boolean quitGame(int playerId) throws RemoteException{
-		if (false == serverController.isGameStarted()) {
+		if (false == Maze.get().isGameStarted()) {
 			return false;
 		}
 		
@@ -90,8 +89,8 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 	}
 
 	@Override
-	public Maze move(Integer playerId, Movement m) throws RemoteException{
-		if (false == serverController.isGameStarted()) {
+	public Maze move(Integer playerId, Movement m, Peer peer) throws RemoteException{
+		if (false == Maze.get().isGameStarted()) {
 			return null;
 		}
 		Player player = Maze.get().getPlayers().get(playerId);
@@ -118,14 +117,29 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		player.setPos(currentPos);
 		collectTreasures(player);
 		
+		
+		//as primary server, we should synchronize maze info to secondary server
+		if (Peer.get().isPrimaryServer()) {
+			System.out.println("######I am the primary server, synchronize secondary server.");
+			ClientController.getSecondaryService().synchronizeMaze(Maze.get());
+		}
+		
+		//as secondary server, when movement is requested, the primary server is down at this time.
+		//we should level up secondary server as primary server and select another secondary server.
+		if (Peer.get().isSecondaryServer()) {
+			System.out.println("######I am the secondary server, primary server has crashed, level"
+					+ "up myself and select another secondary server.");
+			ServerController.levelUpToPrimaryServer();
+			Peer.get().getNodeList().remove(0);
+		}
+		
+		peer.setNodeList(Peer.get().getNodeList());
+		System.out.println("((((((((((((((((()))))))))))))))))");
+		Peer.get().printNodeList();
+		System.out.println("((((((((((((((((()))))))))))))))))");
+		peer.printNodeList();
 		System.out.println("Player " + player.getId() + " moved!");
 		return maze;
-	}
-
-	@Override
-	public boolean detectServerAlive() throws RemoteException {
-		// TODO Auto-generated method stub
-		return true;
 	}
 
 	@Override
@@ -135,9 +149,10 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 	}
 
 	@Override
-	public Maze synchronizeMaze() throws RemoteException {
+	public void synchronizeMaze(Maze maze) throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
+		System.out.println("<secondary>maze info synchronized from primary server.");
+		Maze.get().setMaze(maze);
 	}
 
 }

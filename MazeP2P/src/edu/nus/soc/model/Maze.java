@@ -14,6 +14,7 @@ public class Maze implements Serializable{
 	private int size;
 	private int originalTNum;
 	private int treasureNum;
+	private boolean isGameStarted = false;
 	
 	private Maze() {
 		this.treasureMap = new HashMap<Position, Integer>();
@@ -81,6 +82,25 @@ public class Maze implements Serializable{
 
 	public void setPlayers(Map<Integer, Player> players) {
 		this.players = players;
+	}
+
+	public boolean isGameStarted() {
+		return isGameStarted;
+	}
+
+	public void setGameStarted(boolean isGameStarted) {
+		this.isGameStarted = isGameStarted;
+	}
+
+	public void setMaze(Maze maze) {
+		// TODO Auto-generated method stub
+		this.currentId = maze.currentId;
+		setPlayers(maze.getPlayers());
+		setTreasureMap(maze.getTreasureMap());
+		this.size = maze.size;
+		this.originalTNum = maze.getOriginalTNum();
+		this.treasureNum = maze.getTreasureNum();
+		this.isGameStarted = maze.isGameStarted;
 	}
 
 }

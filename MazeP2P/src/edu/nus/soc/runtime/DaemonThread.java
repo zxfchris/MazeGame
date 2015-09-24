@@ -35,15 +35,8 @@ public class DaemonThread implements Runnable {
 					if (null == ClientController.getSecondaryService()) {
 						//select a secondary server
 						System.out.println();
-					} else
-						try {
-							if (false == ClientController.detectServerAllive(1)) {
-								//select a new secondary server
-							}
-						} catch (RemoteException e) {
-							// remote secondary server is crashed, select a new secondary server
-							
-						}
+					} 
+						
 				} 
 				
 				else if (Peer.get().isSecondaryServer()) {
@@ -51,35 +44,12 @@ public class DaemonThread implements Runnable {
 					//TODO
 					if (null == ClientController.getPrimaryService()) {
 						//select a primary server
-					} else
-						try {
-							if (false == ClientController.detectServerAllive(0)) {
-								//select a new primary server
-							}
-						} catch (RemoteException e) {
-							// remote primary server is crashed, select a new primary server
-						}
+					} 
 					
 				} 
 				
 				else { //this peer is a normal peer, detect server status
-					try {
-						if (false == ClientController.detectServerAllive(0)) {
-							
-						}
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					
-					try {
-						if (false == ClientController.detectServerAllive(1)) {
-							
-						}
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 				}
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {

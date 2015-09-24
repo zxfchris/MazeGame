@@ -135,9 +135,12 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 			//select a new secondary server
 			if (Peer.get().getNodeList().size() >= 2) {
 				while (Peer.get().getNodeList().size() >= 2) {
+					System.out.printf("test node: %s : %d",Peer.get().getNodeList().get(1).getIp(),
+							Peer.get().getNodeList().get(1).getPort());
 					try {
 						if (Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))) != null) {
 							//find active node
+							break;
 						}
 					} catch (MalformedURLException | NotBoundException e) {
 						// TODO Auto-generated catch block

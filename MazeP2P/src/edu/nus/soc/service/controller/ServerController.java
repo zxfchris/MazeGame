@@ -28,7 +28,7 @@ public class ServerController {
 	private static Object lock = new Object();
 	
 	private static Timer timer = new Timer(true);
-	private static Maze maze = Maze.get();
+	//private static Maze maze = Maze.get();
 	private static Map<Integer,CallBackService> callbackMap = new HashMap<Integer, CallBackService>();
 	private static PlayerService playerService = null;
 	
@@ -66,9 +66,9 @@ public class ServerController {
 				System.out.println("callback key: " + key);
 				try {
 					if (key == 1) {
-						callbackMap.get(key).notifySelectedAsServer(maze, Peer.get());
+						callbackMap.get(key).notifySelectedAsServer(Maze.get(), Peer.get());
 					}
-					callbackMap.get(key).notifyGameStart(key, maze, Peer.get());
+					callbackMap.get(key).notifyGameStart(key, Maze.get(), Peer.get());
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -80,6 +80,7 @@ public class ServerController {
 	
 	
 	public Maze initGame(int size, int originalTNum){
+		Maze maze = Maze.get();
 		maze.setSize(size);
 		maze.setOriginalTNum(originalTNum);
 		System.out.println("Maze size and treasure num are initiated!");
@@ -92,6 +93,7 @@ public class ServerController {
 	}
 	
 	public Player handleJoinRequest(CallBackService callbackService) {
+		Maze maze = Maze.get();
 		int currentId = maze.getCurrentId();
 		Player player = new Player(currentId);
 		

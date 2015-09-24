@@ -50,11 +50,12 @@ public class ClientController {
 			return null;
 		} else if (null == move) {
 			System.out.println("Sorry, your input is invalid, please try again.");
-			return maze;
-		} else if (false == Util.isMovable(player.getPos(), move, maze.getSize()) ) {
+			return null;
+		} else if (false == Util.isMovable(player.getPos(), move, Maze.get().getSize()) ) {
+			System.out.printf("player position :%d,%d  maze.size:%d",player.getPos().getX(),player.getPos().getY(),Maze.get().getSize());
 			System.out.println("Sorry, you have reached the boundary, please try again.");
-			return maze;
-		} 
+			return null;
+		}
 		
 		System.out.println("111111111111111111");
 		peer.printNodeList();
@@ -68,6 +69,7 @@ public class ClientController {
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				return  null;
 			}
 		}
 		Maze.get().setMaze(maze);
@@ -132,12 +134,13 @@ public class ClientController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		try {
-			setSecondaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))));
-		} catch (MalformedURLException | RemoteException | NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (Peer.get().getNodeList().size() >= 2) {
+			try {
+				setSecondaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))));
+			} catch (MalformedURLException | RemoteException | NotBoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

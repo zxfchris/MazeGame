@@ -46,7 +46,6 @@ public class CallBackServiceImpl extends UnicastRemoteObject implements CallBack
 
 	@Override
 	public void notifySelectedAsServer(Maze maze, Peer peer) throws RemoteException {
-		// TODO Auto-generated method stub
 		System.out.println("this peer is selected as secondary server.");
 		//peer should register RMI service dynamically
 		Maze.get().setMaze(maze);

@@ -67,7 +67,6 @@ public class ClientController {
 			try {
 				maze = secondaryService.move(player.getId(), move, peer);
 			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				return  null;
 			}
@@ -86,7 +85,6 @@ public class ClientController {
 		try {
 			return primaryService.joinGame(callbackService);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -100,7 +98,6 @@ public class ClientController {
 		try {
 			return primaryService.quitGame(player.getId());
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -131,14 +128,12 @@ public class ClientController {
 		try {
 			setPrimaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(0))));
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (Peer.get().getNodeList().size() >= 2) {
 			try {
 				setSecondaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))));
 			} catch (MalformedURLException | RemoteException | NotBoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

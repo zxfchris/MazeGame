@@ -1,7 +1,6 @@
 package edu.nus.soc.model;
 
 import java.io.Serializable;
-import java.net.InetSocketAddress;
 
 public class Node implements Serializable{
 
@@ -16,7 +15,7 @@ public class Node implements Serializable{
 		this.playerId = playerId;
 	}
 	public Node() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	public String getIp() {
 		return ip;

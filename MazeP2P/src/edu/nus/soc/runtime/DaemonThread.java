@@ -1,7 +1,5 @@
 package edu.nus.soc.runtime;
 
-import java.rmi.RemoteException;
-
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.service.PlayerService;
 import edu.nus.soc.service.controller.ClientController;
@@ -25,7 +23,6 @@ public class DaemonThread implements Runnable {
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		while (true) {
 			System.out.println("thread running..." + t);
 			try {
@@ -53,7 +50,6 @@ public class DaemonThread implements Runnable {
 				}
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -1,21 +1,8 @@
 package edu.nus.soc.model;
 
 import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.UnknownHostException;
-import java.rmi.Naming;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import edu.nus.soc.service.PlayerService;
-import edu.nus.soc.service.impl.PlayerServiceImpl;
-import edu.nus.soc.util.Util;
 
 public class Peer implements Serializable{
 	

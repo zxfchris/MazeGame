@@ -90,6 +90,8 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		return true;
 	}
 
+	//Modify game rule
+	//Once a player occupies a cell, the others can not occupy the cell
 	@Override
 	public Maze move(Integer playerId, Movement m, Peer peer) throws RemoteException{
 		if (false == Maze.get().isGameStarted()) {
@@ -99,19 +101,32 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		Position currentPos = player.getPos();
 		int x = currentPos.getX();
 		int y = currentPos.getY();
+		Position targetPos;
 		
 		switch (m) {
 		case N:
-			currentPos.setY(y-1);
+			targetPos = new Position(x, y-1);
+			if(!isCellOccupied(targetPos, playerId)) {
+				currentPos.setY(y-1);
+			}
 			break;
 		case S:
-			currentPos.setY(y+1);
+			targetPos = new Position(x, y+1);
+			if(!isCellOccupied(targetPos, playerId)) {
+				currentPos.setY(y+1);
+			}
 			break;
 		case E:
-			currentPos.setX(x+1);
+			targetPos = new Position(x+1, y);
+			if(!isCellOccupied(targetPos, playerId)) {
+				currentPos.setX(x+1);
+			}
 			break;
 		case W:
-			currentPos.setX(x-1);
+			targetPos = new Position(x-1, y);
+			if(!isCellOccupied(targetPos, playerId)) {
+				currentPos.setX(x-1);
+			}
 			break;
 		case NOMOVE:
 			break;
@@ -181,4 +196,14 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		Peer.get().setSecondaryServer(true);
 	}
 
+	private static boolean isCellOccupied(Position targetPos, int playerId) {
+		Map<Integer, Player> players = Maze.get().getPlayers();
+		for (Player p : players.values()) {
+			Position pos = p.getPos();
+			if (pos.equals(targetPos) && p.getId() != playerId) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

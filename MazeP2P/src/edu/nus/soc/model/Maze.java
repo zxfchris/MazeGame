@@ -95,7 +95,6 @@ public class Maze implements Serializable{
 	}
 
 	public void setMaze(Maze maze) {
-		// TODO Auto-generated method stub
 		this.currentId = maze.currentId;
 		setPlayers(maze.getPlayers());
 		setTreasureMap(maze.getTreasureMap());

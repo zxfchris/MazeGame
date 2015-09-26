@@ -122,7 +122,6 @@ public class ServerController {
 		try {
 			ipaddr = RemoteServer.getClientHost();
 		} catch (ServerNotActiveException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		int port = Util.allocatePort ++;
@@ -148,7 +147,6 @@ public class ServerController {
 			try {
 				playerService = new PlayerServiceImpl();
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -159,7 +157,7 @@ public class ServerController {
 			System.out.println("RMI service registered, ip - " + Peer.get().getLocalNode().getIp() + 
 					", port - "+ Peer.get().getLocalNode().getPort());
 		} catch (UnknownHostException | RemoteException | MalformedURLException e) {
-			// TODO Auto-generated catch block
+			//TODO
 			//e.printStackTrace();
 		}
 	}

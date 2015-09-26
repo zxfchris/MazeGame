@@ -26,13 +26,14 @@ public class Util {
 	public static void printMaze(Maze maze) {
 		Map<Position, Integer> 	mazeMap = maze.getTreasureMap();
 		Map<Integer, Player> 	players = maze.getPlayers();
+		Map<Position, Integer> playerMap = getPlayerMap(players);
 
 		for (int j=0; j<maze.getSize(); j++) {
 			for (int i=0; i<maze.getSize(); i++) {
 				Position pos = new Position(i, j);
 				if (mazeMap.containsKey(pos)) {
 					System.out.print("T"+mazeMap.get(pos)+"\t");
-				} else if(players.containsKey(pos)) {
+				} else if(playerMap.containsKey(pos)) {
 					System.out.print("P"+players.get(pos).getId()+"\t");
 				} else {
 					System.out.print("*\t");
@@ -55,19 +56,8 @@ public class Util {
 		
 		Map<Position, Integer> 	mazeMap = maze.getTreasureMap();
 		Map<Integer, Player> 	players = maze.getPlayers();
-		Map<Position, Integer> 	playerMap = new HashMap<Position, Integer>();
 		Player					player	= players.get(key);
-		
-		for (int playerId : players.keySet()) {
-			Player p = players.get(playerId);
-			Position playerPos = p.getPos();
-			if (playerMap.containsKey(playerPos)) {
-				int cellPlayerNum = playerMap.get(playerPos);
-				playerMap.put(playerPos, cellPlayerNum + 1);
-			} else {
-				playerMap.put(playerPos, 1);
-			}
-		}
+		Map<Position, Integer> 	playerMap = getPlayerMap(players);
 		
 		System.out.println("---------------------------------------");
 		printPlayer(player);
@@ -77,8 +67,9 @@ public class Util {
 				Position pos = new Position(i, j);
 				
 				if(playerMap.containsKey(pos)) {
-					if (players.get(key).getPos().equals(pos)) {
+					if (player.getPos().equals(pos)) {
 						if (mazeMap.containsKey(pos)) {
+							//TODO bug report
 							System.out.print("[P"+playerMap.get(pos)+"]T"+mazeMap.get(pos)+"\t");
 						} else {
 							System.out.print("[P"+playerMap.get(pos)+"]\t");
@@ -99,6 +90,23 @@ public class Util {
 			System.out.println();
 		}
 		System.out.println("---------------------------------------");
+	}
+	
+	private static Map<Position, Integer> getPlayerMap(Map<Integer, Player> players) {
+		Map<Position, Integer> 	playerMap = new HashMap<Position, Integer>();
+		
+		for (int playerId : players.keySet()) {
+			Player p = players.get(playerId);
+			Position playerPos = p.getPos();
+//			if (playerMap.containsKey(playerPos)) {
+//				int cellPlayerNum = playerMap.get(playerPos);
+//				playerMap.put(playerPos, cellPlayerNum + 1);
+//			} else {
+//				playerMap.put(playerPos, 1);
+//			}
+			playerMap.put(playerPos, playerId);
+		}
+		return playerMap;
 	}
 
 	/**

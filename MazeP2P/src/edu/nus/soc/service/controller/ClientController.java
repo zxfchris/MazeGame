@@ -57,12 +57,11 @@ public class ClientController {
 			System.out.println("Sorry, you have reached the boundary, please try again.");
 			return null;
 		}
-		Position currentPos = player.getPos();
+		Position currentPos = new Position(player.getPos().getX(), player.getPos().getY());
 		System.out.println("111111111111111111");
 		try {
 			maze = primaryService.move(player.getId(), move, peer);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			System.out.println("try secondary service.");
 			try {
 				maze = secondaryService.move(player.getId(), move, peer);

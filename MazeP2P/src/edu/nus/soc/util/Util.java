@@ -84,7 +84,7 @@ public class Util {
 							System.out.print("P"+playerMap.get(pos)+"\t");
 						}
 					}
-				} else if (mazeMap.containsKey(pos)) {
+				} else if (mazeMap.containsKey(pos) && mazeMap.get(pos)!=0) {
 					System.out.print("T"+mazeMap.get(pos)+"\t");
 				} else {
 					System.out.print("*\t");

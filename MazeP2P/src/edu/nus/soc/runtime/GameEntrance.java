@@ -93,7 +93,7 @@ public class GameEntrance {
 
 				maze = controller.move(move);
 				if (null == maze) {
-					System.out.println("Error, move failed.");
+					//System.out.println("Error, move failed.");
 				} else {
 					controller.update(maze);
 					Util.printMaze(player.getId(), maze);

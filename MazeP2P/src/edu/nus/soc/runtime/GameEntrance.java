@@ -100,15 +100,11 @@ public class GameEntrance {
 				
 				Movement move = Movement.getMovementByString(str);
 
-				Position currentPos = player.getPos();
 				maze = controller.move(move);
 				if (null == maze) {
 					System.out.println("Error, move failed.");
 				} else {
 					controller.update(maze);
-					if (player.getPos().equals(currentPos) && move != Movement.NOMOVE) {
-						System.out.println("Sorry the cell is occupied by another player, please try again.");
-					}
 					Util.printMaze(player.getId(), maze);
 					System.out.println("remaining treasures in maze: " + maze.getTreasureNum());
 					if (0 == maze.getTreasureNum()) {

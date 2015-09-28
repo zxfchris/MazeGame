@@ -25,9 +25,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 	private final ServerController serverController = ServerController.getController();
 	
 	private static Maze maze = Maze.get();
-	
-	private static Object lock = new Object();
-	
+		
 	public PlayerServiceImpl() throws RemoteException {
 		super();
 	}
@@ -60,17 +58,17 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		if (true == Maze.get().isGameStarted()) {
 			return null;
 		}
-
-		Player player = serverController.handleJoinRequest(client);
-		//create new Node in nodeMap
-		String ipaddr = null;
-		try {
-			ipaddr = RemoteServer.getClientHost();
-		} catch (ServerNotActiveException e) {
-			e.printStackTrace();
+		synchronized (Util.joinLock) {
+			Player player = serverController.handleJoinRequest(client);
+			//create new Node in nodeMap
+			String ipaddr = null;
+			try {
+				ipaddr = RemoteServer.getClientHost();
+			} catch (ServerNotActiveException e) {
+				e.printStackTrace();
+			}
+			return player;
 		}
-		
-		return player;
 	}
 
 	@Override
@@ -79,16 +77,18 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 			return false;
 		}
 		
-		Map<Integer, Player> players = maze.getPlayers();
-		players.remove(playerId);
-		maze.setPlayers(players);
-		
-		//when a player quits game actively
-		//the server does not hold its callback service
-		serverController.removeCallbackService(playerId);
-		System.out.println("Player "+ playerId +" quited the game");
-		
-		return true;
+		synchronized (Util.quitLock) {
+			Map<Integer, Player> players = maze.getPlayers();
+			players.remove(playerId);
+			maze.setPlayers(players);
+			
+			//when a player quits game actively
+			//the server does not hold its callback service
+			serverController.removeCallbackService(playerId);
+			System.out.println("Player "+ playerId +" quited the game");
+			
+			return true;
+		}
 	}
 
 	//Modify game rule
@@ -98,7 +98,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		if (false == Maze.get().isGameStarted()) {
 			return null;
 		}
-		synchronized (lock) {
+		synchronized (Util.moveLock) {
 			Player player = Maze.get().getPlayers().get(playerId);
 			Position currentPos = player.getPos();
 			int x = currentPos.getX();

@@ -9,7 +9,6 @@ import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
-import edu.nus.soc.model.Position;
 import edu.nus.soc.service.controller.ClientController;
 import edu.nus.soc.service.controller.ServerController;
 import edu.nus.soc.util.Util;
@@ -79,7 +78,7 @@ public class GameEntrance {
 				System.out.println("==============================================");
 				System.out.println("Please input your choice (S, E, N, W, NOMOVE) "
 						+ "or type 'Q' to quit the game:\n->");
-				String str = scanner.nextLine();
+				String str = scanner.nextLine().toUpperCase();
 				if (str.equals("Q")) {
 					System.out.println("Player would like to quit game.");
 					// quit game.

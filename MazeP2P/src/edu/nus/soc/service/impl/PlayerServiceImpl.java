@@ -7,10 +7,13 @@ import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
+import edu.nus.soc.model.Node;
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
 import edu.nus.soc.model.Position;
@@ -101,6 +104,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		}
 		
 		synchronized (Util.moveLock) {
+			Peer.get().setNodeList(removeCrashPlayer(Peer.get().getNodeList()));
 			Player player = Maze.get().getPlayers().get(playerId);
 			Position currentPos = player.getPos();
 			int x = currentPos.getX();
@@ -201,6 +205,23 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 			maze.peer.setNodeList(Peer.get().getNodeList());
 			return maze;
 		}
+	}
+	
+	private static List<Node> removeCrashPlayer(List<Node> nodeList) {
+		Iterator<Node> nodeIter = nodeList.iterator();
+		while (nodeIter.hasNext()) {
+			Node node = nodeIter.next();
+			try {
+				PlayerService playerService = (PlayerService) Naming.lookup(Util.getRMIStringByNode(node));
+			} catch (MalformedURLException | RemoteException | NotBoundException e) {
+				int playerId = node.getPlayerId();
+				nodeIter.remove();
+				Map<Integer, Player> playerMap = maze.getPlayers();
+				playerMap.remove(playerId);
+				System.out.println("Current players number is " + maze.getPlayers().size());
+			}
+		}
+		return nodeList;
 	}
 
 	@Override

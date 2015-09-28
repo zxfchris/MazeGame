@@ -32,7 +32,7 @@ public class ClientController {
 	}
 	
 	public static PlayerService getSecondaryService() {
-		if (maze.peer.getNodeList().size()<=1) {
+		if (Peer.get().getNodeList().size()<=1) {
 			setSecondaryService(primaryService);
 		}
 		return secondaryService;

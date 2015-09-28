@@ -32,9 +32,6 @@ public class ClientController {
 	}
 	
 	public static PlayerService getSecondaryService() {
-		if (Peer.get().getNodeList().size()<=1) {
-			setSecondaryService(primaryService);
-		}
 		return secondaryService;
 	}
 
@@ -135,6 +132,9 @@ public class ClientController {
 	}
 	
 	public static void updatePlayerService() {
+		if (0 == Peer.get().getNodeList().size()) {
+			return;
+		}
 		try {
 			setPrimaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(0))));
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
@@ -143,6 +143,12 @@ public class ClientController {
 		if (Peer.get().getNodeList().size() >= 2) {
 			try {
 				setSecondaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))));
+			} catch (MalformedURLException | RemoteException | NotBoundException e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				setSecondaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(0))));
 			} catch (MalformedURLException | RemoteException | NotBoundException e) {
 				e.printStackTrace();
 			}

@@ -169,7 +169,9 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 							+ "server is needed");
 				}
 				ClientController.updatePlayerService();
-				ClientController.getSecondaryService().notifySelectedAsServer();
+				if (Peer.get().getNodeList().size() >= 2) {
+					ClientController.getSecondaryService().notifySelectedAsServer();
+				}
 			}
 		
 			System.out.println("Player " + player.getId() + " moved!");

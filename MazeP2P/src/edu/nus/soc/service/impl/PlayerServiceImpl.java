@@ -98,6 +98,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		if (false == Maze.get().isGameStarted()) {
 			return null;
 		}
+		
 		synchronized (Util.moveLock) {
 			Player player = Maze.get().getPlayers().get(playerId);
 			Position currentPos = player.getPos();
@@ -153,8 +154,6 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 				//select a new secondary server
 				if (Peer.get().getNodeList().size() >= 2) {
 					while (Peer.get().getNodeList().size() >= 2) {
-						System.out.printf("test node: %s : %d",Peer.get().getNodeList().get(1).getIp(),
-								Peer.get().getNodeList().get(1).getPort());
 						try {
 							if (Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))) != null) {
 								//find active node
@@ -169,7 +168,9 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 							+ "server is needed");
 				}
 				ClientController.updatePlayerService();
-				ClientController.getSecondaryService().notifySelectedAsServer();
+				if (Peer.get().getNodeList().size() >= 2) {
+					ClientController.getSecondaryService().notifySelectedAsServer();
+				}
 			}
 		
 			System.out.println("Player " + player.getId() + " moved!");
@@ -183,7 +184,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		System.out.println("<secondary>maze info synchronized from primary server.");
 		Maze.get().setMaze(maze);
 		Peer.get().setNodeList(maze.peer.getNodeList());
-		System.out.println("nodeList size:" + Peer.get().getNodeList().size());
+		//System.out.println("nodeList size:" + Peer.get().getNodeList().size());
 		ClientController.updatePlayerService();
 	}
 

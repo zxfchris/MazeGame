@@ -18,6 +18,7 @@ public class Maze implements Serializable{
 	public Peer peer;
 	
 	private Maze() {
+		this.currentId = 0;
 		this.treasureMap = new HashMap<Position, Integer>();
 		this.players = new HashMap<Integer, Player>();
 		this.size = 0;
@@ -101,7 +102,6 @@ public class Maze implements Serializable{
 		this.size = maze.size;
 		this.originalTNum = maze.getOriginalTNum();
 		this.treasureNum = maze.getTreasureNum();
-		this.isGameStarted = maze.isGameStarted;
 	}
 
 }

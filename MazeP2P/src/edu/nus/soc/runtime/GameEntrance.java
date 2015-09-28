@@ -9,6 +9,7 @@ import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
+import edu.nus.soc.model.Position;
 import edu.nus.soc.service.controller.ClientController;
 import edu.nus.soc.service.controller.ServerController;
 import edu.nus.soc.util.Util;
@@ -99,11 +100,15 @@ public class GameEntrance {
 				
 				Movement move = Movement.getMovementByString(str);
 
+				Position currentPos = player.getPos();
 				maze = controller.move(move);
 				if (null == maze) {
 					System.out.println("Error, move failed.");
 				} else {
 					controller.update(maze);
+					if (player.getPos().equals(currentPos) && move != Movement.NOMOVE) {
+						System.out.println("Sorry the cell is occupied by another player, please try again.");
+					}
 					Util.printMaze(player.getId(), maze);
 					System.out.println("remaining treasures in maze: " + maze.getTreasureNum());
 					if (0 == maze.getTreasureNum()) {

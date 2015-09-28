@@ -28,7 +28,6 @@ public class CallBackServiceImpl extends UnicastRemoteObject implements CallBack
 		Maze.get().setMaze(maze);
 		Maze.get().setGameStarted(true);
 		
-		peer.printNodeList();
 		//set up RMI service
 		Peer.get().setNodeList(peer.getNodeList());
 		Peer.get().setLocalNode(peer.getNodeByPlayerId(playerId));

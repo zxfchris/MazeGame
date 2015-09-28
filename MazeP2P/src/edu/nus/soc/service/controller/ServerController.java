@@ -54,8 +54,6 @@ public class ServerController {
 			System.out.println("Timer function starts...");
 			//execute all callback methods, notify clients game starts.
 			notifyClients();
-			//for debug, print joined notes
-			Peer.get().printNodeList();
 		}
 		
 	};
@@ -83,12 +81,6 @@ public class ServerController {
 				e.printStackTrace();
 			}
 			Maze.get().setGameStarted(true);
-		}
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		ClientController.updatePlayerService();
 	}
@@ -142,7 +134,6 @@ public class ServerController {
 		int port = Util.allocatePort ++;
 		Node node = new Node(ipaddr, port, player.getId());
 		Peer.get().getNodeList().add(node);
-		System.out.println("nodeListSize:" + Peer.get().getNodeList().size());
 		System.out.println("added node: ip = "+ Peer.get().getNodeByPlayerId(player.getId()).getIp()+
 				" port = "+Peer.get().getNodeByPlayerId(player.getId()).getPort());
 		
@@ -179,10 +170,6 @@ public class ServerController {
 	
 	//called by secondary server
 	public static boolean levelUpToPrimaryServer() {
-		for (int i = 0 ; i < Peer.get().getNodeList().size(); i ++) {
-			System.out.printf("no %d node: %s:%d\n", i, Peer.get().getNodeList().get(i).getIp(),
-					Peer.get().getNodeList().get(i).getPort());
-		}
 		Peer.get().getNodeList().remove(0);	//delete previous primary server
 		Peer.get().setSecondaryServer(false);
 		Peer.get().setPrimaryServer(true);

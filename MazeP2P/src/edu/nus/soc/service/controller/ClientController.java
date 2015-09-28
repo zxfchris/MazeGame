@@ -59,12 +59,11 @@ public class ClientController {
 		}
 		Position currentPos = player.getPos();
 		System.out.println("111111111111111111");
-		peer.printNodeList();
-		System.out.println("222222222222222222");
 		try {
 			maze = primaryService.move(player.getId(), move, peer);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
+			System.out.println("try secondary service.");
 			try {
 				maze = secondaryService.move(player.getId(), move, peer);
 			} catch (RemoteException e1) {
@@ -72,14 +71,14 @@ public class ClientController {
 				return  null;
 			}
 		}
-		
+		if (null == maze) {
+			System.out.println("Sorry, move failed.");
+		}
 		Maze.get().setMaze(maze);
 		if (player.getPos().equals(currentPos) && move != Movement.NOMOVE) {
 			System.out.println("Sorry the cell is occupied by another player, please try again.");
 		}
 		System.out.println("333333333333333333");
-		maze.peer.printNodeList();
-		System.out.println("444444444444444444");
 		
 		Peer.get().setNodeList(maze.peer.getNodeList());
 		System.out.printf("NodeList size:%d, %d\n",maze.peer.getNodeList().size(),Peer.get().getNodeList().size());

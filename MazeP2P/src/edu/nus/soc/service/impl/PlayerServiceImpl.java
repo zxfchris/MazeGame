@@ -140,6 +140,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 			//as primary server, we should synchronize maze info to secondary server
 			if (Peer.get().isPrimaryServer()) {
 				System.out.println("######I am the primary server, synchronize secondary server.");
+				Maze.get().peer.setNodeList(Peer.get().getNodeList());
 				ClientController.getSecondaryService().synchronizeMaze(Maze.get());
 			}
 			
@@ -178,15 +179,12 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 	}
 
 	@Override
-	public Peer updatePeerInfo() throws RemoteException {
-		return Peer.get();
-	}
-
-	@Override
 	public void synchronizeMaze(Maze maze) throws RemoteException {
 		System.out.println("<secondary>maze info synchronized from primary server.");
-		System.out.println("nodeList size:" + Peer.get().getNodeList().size());
 		Maze.get().setMaze(maze);
+		Peer.get().setNodeList(maze.peer.getNodeList());
+		System.out.println("nodeList size:" + Peer.get().getNodeList().size());
+		ClientController.updatePlayerService();
 	}
 
 	@Override

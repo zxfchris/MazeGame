@@ -9,6 +9,7 @@ import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
+import edu.nus.soc.model.Position;
 import edu.nus.soc.service.controller.ClientController;
 import edu.nus.soc.service.controller.ServerController;
 import edu.nus.soc.util.Util;

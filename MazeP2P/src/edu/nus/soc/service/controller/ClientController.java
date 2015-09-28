@@ -9,6 +9,7 @@ import edu.nus.soc.model.Maze;
 import edu.nus.soc.model.Movement;
 import edu.nus.soc.model.Peer;
 import edu.nus.soc.model.Player;
+import edu.nus.soc.model.Position;
 import edu.nus.soc.service.CallBackService;
 import edu.nus.soc.service.PlayerService;
 import edu.nus.soc.service.impl.CallBackServiceImpl;
@@ -31,6 +32,9 @@ public class ClientController {
 	}
 	
 	public static PlayerService getSecondaryService() {
+		if (maze.peer.getNodeList().size()<=1) {
+			setSecondaryService(primaryService);
+		}
 		return secondaryService;
 	}
 
@@ -56,7 +60,7 @@ public class ClientController {
 			System.out.println("Sorry, you have reached the boundary, please try again.");
 			return null;
 		}
-		
+		Position currentPos = player.getPos();
 		System.out.println("111111111111111111");
 		peer.printNodeList();
 		System.out.println("222222222222222222");
@@ -71,7 +75,11 @@ public class ClientController {
 				return  null;
 			}
 		}
+		
 		Maze.get().setMaze(maze);
+		if (player.getPos().equals(currentPos) && move != Movement.NOMOVE) {
+			System.out.println("Sorry the cell is occupied by another player, please try again.");
+		}
 		System.out.println("333333333333333333");
 		maze.peer.printNodeList();
 		System.out.println("444444444444444444");

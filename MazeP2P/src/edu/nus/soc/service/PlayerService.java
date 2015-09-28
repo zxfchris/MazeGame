@@ -16,8 +16,6 @@ public interface PlayerService extends Remote{
 	Maze move(Integer playerId, Movement m, Peer peer) throws RemoteException;
 	
 	//following methods are used for updating peer info
-	Peer updatePeerInfo() throws RemoteException;  //client would like to update peer info intensively.
-	
 	void synchronizeMaze(Maze maze) throws RemoteException; //used between primary server and secondary server.
 	
 	void notifySelectedAsServer() throws RemoteException;	//used by newly selected primary server, notify newly

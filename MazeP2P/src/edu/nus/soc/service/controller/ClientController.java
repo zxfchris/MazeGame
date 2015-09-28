@@ -77,7 +77,7 @@ public class ClientController {
 		}
 		
 		Maze.get().setMaze(maze);
-		if (player.getPos().equals(currentPos) && move != Movement.NOMOVE) {
+		if (maze.getPlayers().get(player.getId()).getPos().equals(currentPos) && move != Movement.NOMOVE) {
 			System.out.println("Sorry the cell is occupied by another player, please try again.");
 		}
 		System.out.println("333333333333333333");

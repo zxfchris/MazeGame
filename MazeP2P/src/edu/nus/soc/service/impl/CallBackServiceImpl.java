@@ -32,7 +32,7 @@ public class CallBackServiceImpl extends UnicastRemoteObject implements CallBack
 		//set up RMI service
 		Peer.get().setNodeList(peer.getNodeList());
 		Peer.get().setLocalNode(peer.getNodeByPlayerId(playerId));
-		System.out.println("playerId:" + playerId + "nodeListSize:" + Peer.get().getNodeList().size());
+		System.out.println("playerId:" + playerId + " nodeListSize:" + Peer.get().getNodeList().size());
 		if (null == Peer.get().getNodeByPlayerId(playerId)) {
 			System.err.println("cannot find player node.");
 		} else {

@@ -185,6 +185,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 	@Override
 	public void synchronizeMaze(Maze maze) throws RemoteException {
 		System.out.println("<secondary>maze info synchronized from primary server.");
+		System.out.println("nodeList size:" + Peer.get().getNodeList().size());
 		Maze.get().setMaze(maze);
 	}
 

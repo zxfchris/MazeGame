@@ -75,7 +75,9 @@ public class ClientController {
 		System.out.println("333333333333333333");
 		maze.peer.printNodeList();
 		System.out.println("444444444444444444");
-		Peer.get().setNodeList(peer.getNodeList());
+		
+		Peer.get().setNodeList(maze.peer.getNodeList());
+		System.out.printf("NodeList size:%d, %d\n",maze.peer.getNodeList().size(),Peer.get().getNodeList().size());
 		//updatePlayerService();
 		
 		return maze;

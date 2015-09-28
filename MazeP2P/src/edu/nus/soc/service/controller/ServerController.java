@@ -64,16 +64,31 @@ public class ServerController {
 		if(!Maze.get().isGameStarted() ) {
 			for (Integer key : callbackMap.keySet()) {
 				System.out.println("callback key: " + key);
-				try {
-					if (key == 1) {
-						callbackMap.get(key).notifySelectedAsServer(Maze.get(), Peer.get());
+				if (0 != key) {
+					try {
+						callbackMap.get(key).notifyGameStart(key, Maze.get(), Peer.get());
+						if (key == 1) {
+							callbackMap.get(key).notifySelectedAsServer(Maze.get(), Peer.get());
+						}
+					} catch (RemoteException e) {
+						e.printStackTrace();
 					}
-					callbackMap.get(key).notifyGameStart(key, Maze.get(), Peer.get());
-				} catch (RemoteException e) {
-					e.printStackTrace();
 				}
 			}
+			//notify this peer game start.
+			try {
+				callbackMap.get(0).notifyGameStart(0, Maze.get(), Peer.get());
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			Maze.get().setGameStarted(true);
+		}
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		ClientController.updatePlayerService();
 	}
@@ -164,6 +179,10 @@ public class ServerController {
 	
 	//called by secondary server
 	public static boolean levelUpToPrimaryServer() {
+		for (int i = 0 ; i < Peer.get().getNodeList().size(); i ++) {
+			System.out.printf("no %d node: %s:%d\n", i, Peer.get().getNodeList().get(i).getIp(),
+					Peer.get().getNodeList().get(i).getPort());
+		}
 		Peer.get().getNodeList().remove(0);	//delete previous primary server
 		Peer.get().setSecondaryServer(false);
 		Peer.get().setPrimaryServer(true);

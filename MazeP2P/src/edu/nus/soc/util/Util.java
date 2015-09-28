@@ -14,6 +14,9 @@ public class Util {
 	public static int defaultPort = 8888;
 	public static int allocatePort = defaultPort;
 	public static String defaultIp = "127.0.0.1";
+	public static Object moveLock = new Object();
+	public static Object joinLock = new Object();
+	public static Object quitLock = new Object();
 	
 	public static Position getRandomPos(int size) {
 		Random	rand = new Random();

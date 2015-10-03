@@ -104,7 +104,9 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		}
 		
 		synchronized (Util.moveLock) {
+			//remove crashed players
 			Peer.get().setNodeList(removeCrashPlayer(Peer.get().getNodeList()));
+			
 			Player player = Maze.get().getPlayers().get(playerId);
 			Position currentPos = player.getPos();
 			int x = currentPos.getX();
@@ -188,6 +190,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 								break;
 							}
 						} catch (MalformedURLException | NotBoundException | RemoteException e) {
+							System.out.println("remove crashed peer.");
 							Peer.get().getNodeList().remove(1);
 						}
 					}
@@ -195,12 +198,14 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 					System.out.println("There is only one Peer remains in the system, no secondary"
 							+ "server is needed");
 				}
+//				System.out.println("3333333");
 				ClientController.updatePlayerService();
+//				System.out.println("4444444");
 				if (Peer.get().getNodeList().size() >= 2) {
 					ClientController.getSecondaryService().notifySelectedAsServer(Maze.get());
 				}
 			}
-		
+			
 			System.out.println("Player " + player.getId() + " moved!");
 			maze.peer.setNodeList(Peer.get().getNodeList());
 			return maze;
@@ -215,7 +220,7 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 				PlayerService playerService = (PlayerService) Naming.lookup(Util.getRMIStringByNode(node));
 			} catch (MalformedURLException | RemoteException | NotBoundException e) {
 				int playerId = node.getPlayerId();
-				nodeIter.remove();
+				//nodeIter.remove();
 				Map<Integer, Player> playerMap = maze.getPlayers();
 				playerMap.remove(playerId);
 				System.out.println("Current players number is " + maze.getPlayers().size());
@@ -229,7 +234,6 @@ public class PlayerServiceImpl extends UnicastRemoteObject implements PlayerServ
 		System.out.println("<secondary>maze info synchronized from primary server.");
 		Maze.get().setMaze(maze);
 		Peer.get().setNodeList(maze.peer.getNodeList());
-		//System.out.println("nodeList size:" + Peer.get().getNodeList().size());
 		ClientController.updatePlayerService();
 	}
 

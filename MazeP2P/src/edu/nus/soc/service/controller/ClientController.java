@@ -58,7 +58,7 @@ public class ClientController {
 			return null;
 		}
 		Position currentPos = new Position(player.getPos().getX(), player.getPos().getY());
-		System.out.println("111111111111111111");
+		//System.out.println("**********before move************");
 		try {
 			maze = primaryService.move(player.getId(), move, peer);
 		} catch (RemoteException e) {
@@ -77,7 +77,7 @@ public class ClientController {
 		if (maze.getPlayers().get(player.getId()).getPos().equals(currentPos) && move != Movement.NOMOVE) {
 			System.out.println("Sorry the cell is occupied by another player, please try again.");
 		}
-		System.out.println("333333333333333333");
+		//System.out.println("**********after move************");
 		
 		Peer.get().setNodeList(maze.peer.getNodeList());
 		System.out.printf("NodeList size:%d, %d\n",maze.peer.getNodeList().size(),Peer.get().getNodeList().size());
@@ -134,21 +134,21 @@ public class ClientController {
 			return;
 		}
 		try {
-			System.out.println("lookup new primary service: " + Peer.get().getNodeList().get(0).getIp() + ":"+Peer.get().getNodeList().get(0).getPort());
+			//System.out.println("lookup new primary service: " + Peer.get().getNodeList().get(0).getIp() + ":"+Peer.get().getNodeList().get(0).getPort());
 			setPrimaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(0))));
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			e.printStackTrace();
 		}
 		if (Peer.get().getNodeList().size() >= 2) {
 			try {
-				System.out.println("lookup new secondary service: " + Peer.get().getNodeList().get(1).getIp() + ":"+Peer.get().getNodeList().get(1).getPort());
+				//System.out.println("lookup new secondary service: " + Peer.get().getNodeList().get(1).getIp() + ":"+Peer.get().getNodeList().get(1).getPort());
 				setSecondaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(1))));
 			} catch (MalformedURLException | RemoteException | NotBoundException e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				System.out.println("lookup new secondary service: " + Peer.get().getNodeList().get(0).getIp() + ":"+Peer.get().getNodeList().get(0).getPort());
+				//System.out.println("lookup new secondary service **: " + Peer.get().getNodeList().get(0).getIp() + ":"+Peer.get().getNodeList().get(0).getPort());
 				setSecondaryService((PlayerService) Naming.lookup(Util.getRMIStringByNode(Peer.get().getNodeList().get(0))));
 			} catch (MalformedURLException | RemoteException | NotBoundException e) {
 				e.printStackTrace();
